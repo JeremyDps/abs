@@ -1,6 +1,6 @@
 <?php
 
-include 'DBClass.php';
+require_once ('DBClass.php');
 
 class Etudiant {
     private $IdEtu;
@@ -31,5 +31,13 @@ class Etudiant {
     function selectEtu() {
         $db = new DBClass('gestion_absence');
         return $db->selectAllEtu();
+    }
+
+    function updateEtudiant($abs, $absNonJustifiee, $badge) {
+        $db = new DBClass('gestion_absence');
+
+        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge);
+
+        header("Location: ../php/profile.php?etu=".$_SESSION['idEtu']);
     }
 }

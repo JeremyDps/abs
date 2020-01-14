@@ -22,5 +22,5 @@
     </ul>
     <?php endforeach ?>
 
-    <a href="modifier.php" class="btn btn-primary">Modifier</a>
+    <a href="modifier.php?etu=<?= $_GET['etu'] ?>" class="btn btn-primary">Modifier</a>
 </div>

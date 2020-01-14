@@ -123,7 +123,21 @@ class DBClass
 
             $i++;
         }
-
+        $req->closeCursor();
         return $tab_etudiant;
+    }
+
+    public function updateEtudiantByUser($abs, $absNonJustifiee, $badge) {
+        session_start();
+        $req = $this->getPDO()->prepare("update etudiant 
+                                                  set nbr_absence = :abs, absence_justifiee = :absNonJustifiee, badge_id = :badge
+                                                  where idEtu = :id");
+        $req->execute(array(
+            'abs' => $abs,
+            'absNonJustifiee' => $absNonJustifiee,
+            'badge' => $badge,
+            'id' => $_SESSION['idEtu']
+        ));
+        $req->closeCursor();
     }
 }
