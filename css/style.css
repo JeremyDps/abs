@@ -1,0 +1,54 @@
+body
+{
+    background-color: #fcfcfc;
+}
+.center-div
+{
+    position: absolute;
+    margin: auto;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100px;
+    height: 100px;
+    border-radius: 3px;
+}
+
+table,
+td {
+    border: 1px solid #333;
+}
+
+thead,
+
+tfoot {
+    background-color: #333;
+    color: #fff;
+}
+
+.hide{
+    visibility: hidden;
+}
+
+
+.list-group{
+    line-height: 25px;
+    font-weight: bold;
+    height: 50px;
+    width: 100px;
+    list-style-type: none;
+    text-align: center;
+    color: #FFFFFF;
+    margin-left: -200px;
+}
+
+.right{
+    display: inline-block;
+    margin-left: 1080px;
+    width: 125px;
+
+}
+
+
+
