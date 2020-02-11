@@ -8,4 +8,16 @@ class Classe{
 
     return $db->selectClasseByProf($username);
     }
+
+    function etuByClasse($classe) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuByClasse($classe);
+    }
+
+    function groupeByClasse($classe) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectGroupByClasse($classe);
+    }
 }

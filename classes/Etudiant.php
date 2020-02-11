@@ -40,4 +40,10 @@ class Etudiant {
 
         header("Location: ../php/profile.php?etu=".$_SESSION['idEtu']);
     }
+
+    function search($recherche) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->searchStudent($recherche);
+    }
 }

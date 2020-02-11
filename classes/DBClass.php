@@ -46,11 +46,13 @@ class DBClass
             $_SESSION['username'] = $username;
 
             if($isConnecte['role'] == "prof"){
+                $_SESSION['role'] = "prof";
                 $req->closeCursor();
                 return 1;
             }
 
             if($isConnecte['role'] == "admin") {
+                $_SESSION['role'] = "admin";
                 $req->closeCursor();
                 return 2;
             }
@@ -86,7 +88,7 @@ class DBClass
         $tab_cours = array();
         $i = 0;
 
-        $req = $this->getPDO()->prepare("select cours.nom from cours 
+        $req = $this->getPDO()->prepare("select distinct cours.nom from cours 
                                                     inner join prof_cours on cours.idCours = prof_cours.idCours 
                                                     inner join professeur on prof_cours.idProf = professeur.idProf
                                                     inner join user on user.id = professeur.idUser
@@ -139,5 +141,75 @@ class DBClass
             'id' => $_SESSION['idEtu']
         ));
         $req->closeCursor();
+    }
+
+    public function searchStudent($recherche) {
+        $coordonneesEtu = array();
+        $i = 0;
+
+        if($req = $this->getPDO()->prepare("select * from etudiant where idEtu=:recherche or nom=:recherche or prenom=:recherche or formation=:recherche")) {
+            $req->execute(array(
+                'recherche' => $recherche
+            ));
+
+            while($donnees = $req->fetch()) {
+                $coordonneesEtu[$i] = array(
+                    'idEtu' => $donnees['idEtu'],
+                    'nom' => $donnees['nom'],
+                    'prenom' => $donnees['prenom'],
+                    'nbr_absence' => $donnees['nbr_absence'],
+                    'formation' => $donnees['formation']
+                );
+                $i++;
+            }
+
+            $req->closeCursor();
+            return $coordonneesEtu;
+        }
+        $req->closeCursor();
+        return 0;
+    }
+
+    public function selectEtuByClasse($classe) {
+        $list_etu = array();
+        $i = 0;
+
+        if($req = $this->getPDO()->prepare('select idEtu, prenom, nom from etudiant where formation = ? order by nom asc')) {
+            $req->execute(array($classe));
+
+            while($donnees = $req->fetch()) {
+                $list_etu[$i] = array(
+                    'idEtu' => $donnees['idEtu'],
+                    'prenom' => $donnees['prenom'],
+                    'nom' => $donnees['nom']
+                );
+                $i++;
+            }
+            $req->closeCursor();
+            return $list_etu;
+        } else {
+            $req->closeCursor();
+            return 0;
+        }
+    }
+
+    public function selectGroupByClasse($classe) {
+        $list_group = array();
+        $i = 0;
+
+        if($req = $this->getPDO()->prepare("select groupe.nom from groupe inner join classe on classe.idClasse = groupe.classe_id where classe.nom = ? order by groupe.nom asc")) {
+            $req->execute(array($classe));
+            while($donnees = $req->fetch()) {
+                $list_group[$i] = array(
+                    'groupe' => $donnees['nom']
+                );
+                $i++;
+            }
+            $req->closeCursor();
+            return $list_group;
+        } else {
+            $req->closeCursor();
+            return 0;
+        }
     }
 }

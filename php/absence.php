@@ -1,82 +1,96 @@
 <?php
     session_start();
     if ($_SESSION['connecte'] == true) {
-    require '../layout/header.php';
-    require_once ('../classes/Classe.php');
-    require_once('../classes/Cours.php');
+        require '../layout/header.php';
+        require_once('../classes/Classe.php');
+        require_once('../classes/Cours.php');
 
-    $classe = new Classe();
+        $classe = new Classe();
 
-    $list_classe = $classe->classeByProf($_SESSION['username']);
+        $list_classe = $classe->classeByProf($_SESSION['username']);
 
-    $cours = new Cours();
 
-    $list_cours = $cours->coursByProf($_SESSION['username']);
+        if (isset($_GET['classe'])) {
+            $list_etu = $classe->etuByClasse($_GET['classe']);
+        }
+
+
+        $list_groupe_dut1 = $classe->groupeByClasse('DUT INFO 1');
+        $list_groupe_dut2 = $classe->groupeByClasse('DUT INFO 2');
+
+        $cours = new Cours();
+
+        $list_cours = $cours->coursByProf($_SESSION['username']);
 
 ?>
 
 
-
-<h1 class="text-center">Bienvenue <?php echo $_SESSION['prenom'] ?></h1>
+    <h1 class="text-center">Bienvenue <?php echo $_SESSION['prenom'] ?></h1>
 
 <div class="col-md-8">
-    <form action="">
+    <form action="../classes/traitement.php" method="post">
         <div class="form-group">
             <label for="classe">Classe</label>
             <select class="form-control" name="classe" id="classe">
                 <option value="">Selectionner votre classe</option>
-                <?php foreach ($list_classe as $classe): ?>
-                <option value=""><?= $classe?></option>
-                <?php endforeach?>
-            </select>
-            <label for="cours">Cours</label>
-            <select class="form-control" name="cours" id="cours">
-                <option value="">Selectionner le cour enseigné</option>
-                <?php foreach ($list_cours as $cour): ?>
-                <option value="DevWeb"><?= $cour?></option>
+                <?php foreach ($list_classe as $classe):
+                if($classe == "DUT INFO 1") {
+                ?>
+                <optgroup label="<?= $classe ?>"></optgroup>
+                <option value="<?= $classe ?>"><?= $classe ?></option>
+                <?php foreach ($list_groupe_dut1 as $groupe):  ?>
+                <option value="<?= $groupe['groupe'] ?>"><?= $groupe['groupe'] ?></option>
                 <?php endforeach ?>
-            </select>
-            <label for="salle">Salle</label>
-            <input type="text" class="form-control" name="salle" id="salle" placeholder="Entrer la salle dans laquelle vous vous trouvez">
+                <?php } if($classe == "DUT INFO 2")  {
+                ?>
+                    <optgroup label="<?= $classe ?>"></optgroup>
+                    <option value="<?= $classe ?>"><?= $classe ?></option>
+                    <?php foreach ($list_groupe_dut2 as $groupe):  ?>
+                        <option value="<?= $groupe['groupe'] ?>"><?= $groupe['groupe'] ?></option>
+                    <?php endforeach ?>
+                <?php } else {  ?>
+                        <option value="<?= $classe?>"><?= $classe?></option>
+                    <?php } endforeach?>
+                </select>
+                <label for="cours">Cours</label>
+                <select class="form-control" name="cours" id="cours">
+                    <option value="">Selectionner le cour enseigné</option>
+                    <?php foreach ($list_cours as $cour): ?>
+                        <option value="<?= $cour?>"><?= $cour?></option>
+                    <?php endforeach ?>
+                </select>
+                <label for="salle">Salle</label>
+                <input type="text" class="form-control" name="salle" id="salle" placeholder="Entrer la salle dans laquelle vous vous trouvez">
+                <button name="valider_cours" class="btn btn-primary" type="submit">Rechercher</button>
 
         </div>
 
-    </form>
-    <button class="btn btn-primary" onclick="showTable()">Rechercher</button>
-    <br>
 
+    </form>
     <br>
-    <table class="table hide" id="table">
+    <br>
+    <?php if(isset($_GET['classe'])) {   ?>
+
+    <table class="table" id="table">
         <thead class="thead-dark">
         <tr>
-            <th scope="col">Tag</th>
+            <th scope="col">ID de l'étudiant</th>
             <th scope="col">Nom</th>
             <th scope="col">Prénom</th>
-            <th scope="col">Heure d'arrivée</th>
         </tr>
         </thead>
         <tbody>
+        <?php foreach ($list_etu as $etudiant): ?>
         <tr>
-            <th scope="row">1</th>
-            <td>Genel</td>
-            <td>Julien</td>
-            <td>8h30</td>
+            <th><?= $etudiant['idEtu'] ?></th>
+            <td><?= $etudiant['nom'] ?></td>
+            <td><?= $etudiant['prenom'] ?></td>
         </tr>
-        <tr>
-            <th scope="row">2</th>
-            <td>Jeremy</td>
-            <td>Dupuis</td>
-            <td>13h00</td>
-        </tr>
-        <tr>
-            <th scope="row">3</th>
-            <td>Planck</td>
-            <td>Théo</td>
-            <td></td>
-        </tr>
+        <?php endforeach ?>
         </tbody>
     </table>
 
+    <?php  }  ?>
 </div>
 
 <?php  }else{

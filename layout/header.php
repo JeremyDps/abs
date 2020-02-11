@@ -10,6 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="../../../../favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Automatisation des absences </title>
 
@@ -29,7 +30,10 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
-
+            <?php if($_SESSION['role'] == 'admin') {  ?>
+                <li class="nav-item"><a href="../php/admin.php" class="nav-link">Page admin</a></li>
+                <li class="nav-item"><a href="../php/absence.php" class="nav-link">Page Professeurs</a></li>
+            <?php  }  ?>
         </ul>
         <?php if($_SESSION['connecte'] == true) {  ?>
             <ul class="nav navbar-nav navbar-right">
