@@ -3,6 +3,13 @@
 require_once('DBClass.php');
 
 class Classe{
+
+    function allClasses() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectAllClasses();
+    }
+
     function classeByProf($username) {
     $db = new DBClass('gestion_absence');
 

@@ -2,10 +2,12 @@
     require_once('User.php');
     require_once('Etudiant.php');
     require_once ('Classe.php');
+    require_once ('Prof.php');
 
     $user = new User();
     $etu = new Etudiant();
     $classes = new Classe();
+    $prof = new Prof();
 
     //vérification connexion
     if(isset($_POST['connexion'])) {
@@ -16,12 +18,20 @@
     }
 
     //verification modification etudiant
-    if(isset($_POST['modifier'])) {
+    if(isset($_POST['modifier_etu'])) {
         $absence = $_POST['absence'];
         $absenceNonJustifiee = $_POST['absenceNonJustifiee'];
         $badge = $_POST['badge'];
 
         $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge);
+    }
+
+    if(isset($_POST['modifier_prof'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+        $role = $_POST['role'];
+
+        $prof->updateProfesseur($username, $password, $role);
     }
 
     if(isset($_POST['rechercher'])) {
@@ -45,4 +55,14 @@
         $classes->etuByClasse($classe);
 
         header('Location: ../php/absence.php?classe='.$classe);
+    }
+
+    if(isset($_POST['create_etu'])) {
+        $nom = $_POST['nom'];
+        $prenom = $_POST['prenom'];
+        $formation = $_POST['formation'];
+        $badge = $_POST['badge'];
+
+
+        $etu->createEtudiant($nom, $prenom, $formation, $badge);
     }

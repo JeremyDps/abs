@@ -140,6 +140,21 @@ class DBClass
             'badge' => $badge,
             'id' => $_SESSION['idEtu']
         ));
+        echo 'bnjour' . $_SESSION['idEtu'];
+        $req->closeCursor();
+    }
+
+    public function updateProfesseurByUser($username, $password, $role) {
+        session_start();
+        $req = $this->getPDO()->prepare("update user 
+                                                  set username = :username, mdp = :password, role = :role
+                                                  where id = :id");
+        $req->execute(array(
+            'username' => $username,
+            'password' => $password,
+            'role' => $role,
+            'id' => $_SESSION['idProf']
+        ));
         $req->closeCursor();
     }
 
@@ -211,5 +226,125 @@ class DBClass
             $req->closeCursor();
             return 0;
         }
+    }
+
+    public function selectAllProf() {
+        $list_prof = array();
+        $i = 0;
+
+        if($req = $this->getPDO()->query('select * from user where role = "admin" or role = "prof" order by nomUser')) {
+            while($datas = $req->fetch()) {
+                $list_prof[$i] = array(
+                    'id' => $datas['id'],
+                    'nom' => $datas['nomUser'],
+                    'prenom' => $datas['prenom'],
+                    'username' => $datas['username'],
+                    'role' => $datas['role']
+                );
+
+                $i++;
+            }
+
+            $req->closeCursor();
+            return $list_prof;
+        } else {
+            echo 'Erreur dans le chargement du tableau';
+            return 0;
+        }
+    }
+
+    public function selectDetailsEtudiant($id) {
+        $list_details = array();
+
+        $query = $this->getPDO()->prepare('SELECT * FROM etudiant where idEtu = ?');
+        $query->execute(array($id));
+
+        $datas = $query->fetch();
+
+        $list_details['id'] = $datas['idEtu'];
+        $list_details['nom'] = $datas['nom'];
+        $list_details['prenom'] = $datas['prenom'];
+        $list_details['formation'] = $datas['formation'];
+        $list_details['nbr_absence'] = $datas['nbr_absence'];
+        $list_details['absence_justifiee'] = $datas['absence_justifiee'];
+        $list_details['badge'] = $datas['badge_id'];
+
+        $query->closeCursor();
+
+        return $list_details;
+    }
+
+    public function selectDetailsProfesseur($id) {
+        $list_details = array();
+
+        $query = $this->getPDO()->prepare('SELECT * FROM user where id = ? and (role = "admin" or role = "prof")');
+        $query->execute(array($id));
+
+        $datas = $query->fetch();
+
+        $list_details['id'] = $datas['id'];
+        $list_details['username'] = $datas['username'];
+        $list_details['password'] = $datas['mdp'];
+        $list_details['nom'] = $datas['nomUser'];
+        $list_details['prenom'] = $datas['prenom'];
+        $list_details['role'] = $datas['role'];
+
+        $query->closeCursor();
+
+        return $list_details;
+    }
+
+    public function selectAllClasses() {
+        $list_classes = array();
+        $i = 0;
+
+        if($req = $this->getPDO()->query('select * from classe')) {
+            while($datas = $req->fetch()) {
+                $list_classes[$i] = array(
+                    'id' => $datas['idClasse'],
+                    'nom' => $datas['nom']
+                );
+
+                $i++;
+            }
+
+            $req->closeCursor();
+            return $list_classes;
+        } else {
+            echo 'Erreur dans le chargement du tableau';
+            return 0;
+        }
+    }
+
+    public function insertEtudiant($nom, $prenom, $formation, $badge) {
+
+        $req = $this->getPDO()->prepare("select idClasse from classe where nom = :nom");
+        $req->execute(array(
+            'nom' => $formation
+        ));
+        $datas = $req->fetch();
+
+        $query = $this->getPDO()->prepare("insert into etudiant(idEtu, prenom, nom, formation, nbr_absence, absence_justifiee, classe_id, badge_id, etat) values 
+                                                    (default, :prenom, :nom, :formation, 0, 0, :classe, :badge, 'present')");
+
+        echo $prenom . ' ' . $nom . ' ' . $formation . ' ' . $datas['idClasse'] . ' ' . $badge;
+
+        $query->execute(array(
+            'prenom' => $prenom,
+            'nom' => $nom,
+            'formation' => $formation,
+            'classe' => $datas['idClasse'],
+            'badge' => $badge
+        ));
+
+        $req->closeCursor();
+        $query->closeCursor();
+    }
+
+    public function deleteEtu($id) {
+        $query = $this->getPDO()->prepare("delete from etudiant where idEtu = :id");
+        $query->execute(array(
+            'id' => $id
+        ));
     }
 }

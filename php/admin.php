@@ -23,9 +23,12 @@
             <input type="submit" name="rechercher">
         </form>
 
+        <a href="professeurs.php">Liste des professeurs</a>
+
     </div>
 
     <?php  if(!isset($_GET['param'])) {  ?>
+    <a href="ajouter.php?type=etu" class="btn btn-primary">Ajouter un étudiant</a>
     <table class="table" id="table">
         <thead class="thead-dark">
         <tr>
@@ -34,6 +37,7 @@
             <th scope="col">Prénom</th>
             <th scope="col">Nombre d'absences</th>
             <th scope="col">Formation</th>
+            <th scope="col">Supprimer</th>
         </tr>
         </thead>
         <tbody>
@@ -41,10 +45,11 @@
 
         <tr>
             <th scope="row"><?= $etudiant['idEtu']?></th>
-            <td><a href="profile.php?etu=<?= $etudiant['idEtu'] ?>"><?= $etudiant['nom'] ?></a></td>
+            <td><a href="profile.php?pers=<?= $etudiant['idEtu'] ?>&type=etu"><?= $etudiant['nom'] ?></a></td>
             <td><?= $etudiant['prenom'] ?></td>
             <td><?= $etudiant['nbr_absence'] ?></td>
             <td><?= $etudiant['formation'] ?></td>
+            <td><a href="delete.php?type=etu&pers=<?= $etudiant['idEtu'] ?>">Supprimer l'étudiant</a> </td>
         </tr>
         <?php endforeach ?>
 
@@ -73,6 +78,7 @@
                     <td><?= $etudiant['prenom'] ?></td>
                     <td><?= $etudiant['nbr_absence'] ?></td>
                     <td><?= $etudiant['formation'] ?></td>
+
                 </tr>
             <?php endforeach ?>
 

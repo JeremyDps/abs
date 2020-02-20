@@ -24,8 +24,10 @@ class Etudiant {
     }*/
 
     function createEtudiant($nom, $prenom, $formation, $badge) {
-        $db = new DBClass('gestion_absence', 'root','');
-        //$db->insertEtudiant($nom, $prenom, $formation, $badge);
+        $db = new DBClass('gestion_absence');
+        $db->insertEtudiant($nom, $prenom, $formation, $badge);
+
+        header('Location: ../php/admin.php');
     }
 
     function selectEtu() {
@@ -38,12 +40,26 @@ class Etudiant {
 
         $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge);
 
-        header("Location: ../php/profile.php?etu=".$_SESSION['idEtu']);
+        header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
     }
 
     function search($recherche) {
         $db = new DBClass('gestion_absence');
 
         return $db->searchStudent($recherche);
+    }
+
+    function detailsEtudiaant($id) {
+        $db = new DBClass("gestion_absence");
+
+        return $db->selectDetailsEtudiant($id);
+    }
+
+    function delete($id){
+        $db = new DBClass("gestion_absence");
+
+        $db->deleteEtu($id);
+
+        header('Location: ../php/admin.php');
     }
 }
