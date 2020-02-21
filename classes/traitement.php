@@ -66,3 +66,14 @@
 
         $etu->createEtudiant($nom, $prenom, $formation, $badge);
     }
+
+    if(isset($_POST['create_prof'])) {
+        $nom = $_POST['nom'];
+        $prenom = $_POST['prenom'];
+        $password = $_POST['password'];
+        $role = $_POST['role'];
+
+        echo $nom . " " . $prenom .  ' ' .$password . ' ' . $role;
+
+        $prof->createProf($nom, $prenom, $password, $role);
+    }

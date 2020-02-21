@@ -31,9 +31,12 @@ class DBClass
 
     public function connection($username, $mdp){
         session_start();
+
+        echo $username . ' ' .$mdp;
         $req = $this->getPDO()->prepare("select * from user where username = ? and mdp = ?");
         $req->execute(array($username, $mdp));
         $isConnecte = $req->fetch();
+        echo 'role'  . $isConnecte['role'];
 
         if($isConnecte['username'] === $username && $isConnecte['mdp'] === $mdp) {
 
@@ -152,7 +155,7 @@ class DBClass
         $req->execute(array(
             'username' => $username,
             'password' => $password,
-            'role' => $role,
+            'role' => strtolower($role),
             'id' => $_SESSION['idProf']
         ));
         $req->closeCursor();
@@ -343,6 +346,32 @@ class DBClass
 
     public function deleteEtu($id) {
         $query = $this->getPDO()->prepare("delete from etudiant where idEtu = :id");
+        $query->execute(array(
+            'id' => $id
+        ));
+    }
+
+    public function insertProfesseur($nom, $prenom, $password, $role) {
+        $query = $this->getPDO()->prepare("insert into user(id, username, nomUser, prenom, mdp, role) values 
+                                                    (default, :username, :nom, :prenom, :password, :role)");
+
+        $userName = strtolower($nom) . '.' . strtolower($prenom);
+
+        echo $userName;
+
+        $query->execute(array(
+            'username' => $userName,
+            'nom' => $nom,
+            'prenom' => $prenom,
+            'password' => $password,
+            'role' => strtolower($role)
+        ));
+
+        $query->closeCursor();
+    }
+
+    public function deleteProfesseur($id) {
+        $query = $this->getPDO()->prepare("delete from user where id = :id");
         $query->execute(array(
             'id' => $id
         ));

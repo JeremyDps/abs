@@ -46,7 +46,11 @@ if($_GET['type'] === 'etu') {
         <ul>
             <li>Modifier le nom d'utilisateur <input name="username" type="text" value="<?= $coordonnees['username'] ?>" required></li>
             <li>Modifier le mot de passe : <input name="password" type="password" value="<?= $coordonnees['password'] ?>" required></li>
-            <li>Modifier le role : <input name="role" type="text" value="<?= $coordonnees['role'] ?>" required></li>
+            <li>Modifier le role (<?php echo $coordonnees['role'] ?>) :
+                <select name="role" type="text" value="<?= $coordonnees['role'] ?>">
+                    <option name="admin">Admin</option>
+                    <option name="prof">Prof</option>
+                </select></li>
         </ul>
         <input name="modifier_prof" class="btn btn-primary" type="submit">
     </form>

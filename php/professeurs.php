@@ -21,6 +21,8 @@
 
     </div>
 
+    <a href="ajouter.php?type=prof" class="btn btn-primary">Ajouter un professeur</a>
+
     <table class="table" id="table">
         <thead class="thead-dark">
         <tr>
@@ -29,6 +31,7 @@
             <th scope="col">Prénom</th>
             <th scope="col">Nom d'utilisateur</th>
             <th scope="col">Rôle</th>
+            <th scope="col">Supprimer</th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +43,7 @@
                 <td><?= $prof['prenom'] ?></td>
                 <td><?= $prof['username'] ?></td>
                 <td><?= $prof['role'] ?></td>
+                <td><a href="delete.php?type=prof&pers=<?= $prof['id'] ?>">Supprimer le professeur</a> </td>
             </tr>
         <?php endforeach ?>
 
