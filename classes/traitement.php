@@ -3,11 +3,13 @@
     require_once('Etudiant.php');
     require_once ('Classe.php');
     require_once ('Prof.php');
+    require_once ('Cours.php');
 
     $user = new User();
     $etu = new Etudiant();
     $classes = new Classe();
     $prof = new Prof();
+    $cours = new Cours();
 
     //vérification connexion
     if(isset($_POST['connexion'])) {
@@ -61,10 +63,11 @@
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
         $formation = $_POST['formation'];
+        $groupe = $_POST['groupe'];
         $badge = $_POST['badge'];
 
 
-        $etu->createEtudiant($nom, $prenom, $formation, $badge);
+        $etu->createEtudiant($nom, $prenom, $formation, $groupe, $badge);
     }
 
     if(isset($_POST['create_prof'])) {
@@ -77,3 +80,20 @@
 
         $prof->createProf($nom, $prenom, $password, $role);
     }
+
+    if(isset($_POST['create_groupe'])) {
+        $nom = $_POST['nom'];
+        $classe = $_POST['classe'];
+
+
+        $classes->createGroupe($nom, $classe);
+    }
+
+if(isset($_POST['modifier_cours'])) {
+    $matricule = $_POST['matricule'];
+    $nom = $_POST['nom'];
+    $classe = $_POST['classe'];
+
+
+    $cours->updateCours($matricule, $nom, $classe);
+}

@@ -23,9 +23,9 @@ class Etudiant {
         $this->classe_id = $classe_id;
     }*/
 
-    function createEtudiant($nom, $prenom, $formation, $badge) {
+    function createEtudiant($nom, $prenom, $formation, $groupe, $badge) {
         $db = new DBClass('gestion_absence');
-        $db->insertEtudiant($nom, $prenom, $formation, $badge);
+        $db->insertEtudiant($nom, $prenom, $formation, $groupe, $badge);
 
         header('Location: ../php/admin.php');
     }
@@ -61,5 +61,19 @@ class Etudiant {
         $db->deleteEtu($id);
 
         header('Location: ../php/admin.php');
+    }
+
+    function etuByGroup($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuByGroup($id);
+    }
+
+    function updateGroupeEtu($etudiant_id, $groupe_id) {
+        $db = new DBClass('gestion_absence');
+
+        $switch_groupe = $db->updateGroupeEtu($etudiant_id, $groupe_id);
+
+        header('Location: ../php/groupes.php');
     }
 }

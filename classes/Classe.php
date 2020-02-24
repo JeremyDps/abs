@@ -10,6 +10,12 @@ class Classe{
         return $db->selectAllClasses();
     }
 
+    function allGroupes() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectAllGroupes();
+    }
+
     function classeByProf($username) {
     $db = new DBClass('gestion_absence');
 
@@ -26,5 +32,34 @@ class Classe{
         $db = new DBClass('gestion_absence');
 
         return $db->selectGroupByClasse($classe);
+    }
+
+    function selectAllGroupesByClasse() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectAllGroupByClasse();
+    }
+
+    function deleteGroupe($id){
+        $db = new DBClass("gestion_absence");
+
+        $db->deleteGroupe($id);
+        echo $id;
+
+        //header('Location: ../php/admin.php');
+    }
+
+    function groupById($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectGroupById($id);
+    }
+
+    function createGroupe($nom, $classe) {
+        $db = new DBClass('gestion_absence');
+
+        $db->insertGroupe($nom, $classe);
+
+        //header('Location: ../php/groupes.php');
     }
 }

@@ -17,6 +17,16 @@ if ($_GET['type'] === 'prof') {
     $_SESSION['idEtu'] = $_GET['pers'];
     $coordonnees = $etu->detailsEtudiaant($_GET['pers']);
 
+} else if($_GET['type'] === 'cours') {
+
+    require_once '../classes/Cours.php';
+    require_once '../classes/Classe.php';
+    $cours = new Cours();
+    $classe = new Classe();
+    $_SESSION['idCours'] = $_GET['pers'];
+    $coordonnees = $cours->detailsCours($_GET['pers']);
+    $list_classe = $classe->allClasses();
+
 } else {
     echo 'type inconnu';
 }
@@ -57,8 +67,24 @@ if($_GET['type'] === 'etu') {
 
 <?php
 
-}
+} else if ($_GET['type'] === 'cours') {
 
 ?>
+
+    <form method="post" action="../classes/traitement.php">
+        <ul>
+            <li>Modifier le matricule <input name="matricule" type="text" value="<?= $coordonnees['matricule'] ?>" required></li>
+            <li>Modifier le nom : <input name="nom" type="text" value="<?= $coordonnees['nom'] ?>" required></li>
+            <li>Modifier la formation (<?php echo $coordonnees['classe'] ?>) :
+                <select name="classe" type="text" >
+                    <?php  foreach($list_classe as $c): ?>
+                        <option name="classe"><?php echo $c['nom']; ?></option>
+                    <?php endforeach  ?>
+                </select></li>
+        </ul>
+        <input name="modifier_cours" class="btn btn-primary" type="submit">
+    </form>
+
+<?php } ?>
 
 

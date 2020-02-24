@@ -5,16 +5,17 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     require '../layout/header.php';
     require_once '../classes/Classe.php';
 
-    $classe = new Classe();
 
-    $classes = $classe->allClasses();
 
 ?>
 
 <?php
 
  if($_GET['type'] === 'etu') {
+     $classe = new Classe();
 
+     $classes = $classe->allClasses();
+     $groupes = $classe->allGroupes();
  ?>
 
  <form action="../classes/traitement.php" method="post">
@@ -27,6 +28,12 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         <?php foreach($classes as $c):  ?>
             <option name="<?= $c['nom'] ?>"><?php echo $c['nom'] ?></option>
         <?php endforeach  ?>
+     </select>  <br>
+     <label name="groupe"> Groupe : </label>
+     <select id="groupe" name="groupe">
+         <?php foreach($groupes as $g):  ?>
+             <option name="<?= $g['nom'] ?>"><?php echo $g['nom'] ?></option>
+         <?php endforeach  ?>
      </select>  <br>
      <label name="badge"> Numéro de badge : </label>
      <input name="badge" type="text">  <br>
@@ -55,9 +62,23 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
      <input type="submit" name="create_prof" value="Créer le professeur">
  </form>
 
- <?php  }  ?>
+ <?php  } else if ($_GET['type'] === 'group') {
+     require_once '../classes/Classe.php';
+     $classe = new Classe();
+     $all_classe = $classe->allClasses();
+     var_dump($all_classe);
+ }?>
 
-
+     <form action="../classes/traitement.php" method="post">
+         <label name="nom"> Nom : </label>
+         <input name="nom" type="text">  <br>
+         <select id="classe" name="classe">
+             <?php foreach($all_classe as $c):  ?>
+                 <option name="classe"><?php echo $c['nom'] ?></option>
+             <?php endforeach  ?>
+         </select>  <br>
+         <input type="submit" name="create_groupe" value="Créer le groupe">
+     </form>
 
 <?php  }else{
     header('Location: index.php');

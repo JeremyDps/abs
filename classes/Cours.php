@@ -9,4 +9,32 @@ class Cours
 
         return $db->selectCoursByProf($username);
     }
+
+    function allCours() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectAllCours();
+    }
+
+    function deleteCours($id) {
+        $db = new DBClass('gestion_absence');
+
+        $db->deleteCours($id);
+
+        header('Location: ../php/cours.php');
+    }
+
+    function detailsCours($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectDetailsCours($id);
+    }
+
+    function updateCours($matricule, $nom, $classe) {
+        $db = new DBClass('gestion_absence');
+
+        $db->updateCours($matricule, $nom, $classe);
+
+        header('Location: ../php/cours.php');
+    }
 }

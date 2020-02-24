@@ -23,7 +23,9 @@
             <input type="submit" name="rechercher">
         </form>
 
-        <a href="professeurs.php">Liste des professeurs</a>
+        <a href="professeurs.php">Liste des professeurs</a>  <br>
+        <a href="groupes.php">Liste des Groupes</a>  <br>
+        <a href="cours.php">Liste des Cours</a>
 
     </div>
 
@@ -37,6 +39,7 @@
             <th scope="col">Prénom</th>
             <th scope="col">Nombre d'absences</th>
             <th scope="col">Formation</th>
+            <th scope="col">Groupe</th>
             <th scope="col">Supprimer</th>
         </tr>
         </thead>
@@ -49,6 +52,7 @@
             <td><?= $etudiant['prenom'] ?></td>
             <td><?= $etudiant['nbr_absence'] ?></td>
             <td><?= $etudiant['formation'] ?></td>
+            <td><?= $etudiant['groupe'] ?></td>
             <td><a href="delete.php?type=etu&pers=<?= $etudiant['idEtu'] ?>">Supprimer l'étudiant</a> </td>
         </tr>
         <?php endforeach ?>
