@@ -25,7 +25,8 @@
 
         <a href="professeurs.php">Liste des professeurs</a>  <br>
         <a href="groupes.php">Liste des Groupes</a>  <br>
-        <a href="cours.php">Liste des Cours</a>
+        <a href="cours.php">Liste des Cours</a> <br>
+        <a href="passage.php">Passer les étudiants à l'année suivante</a>
 
     </div>
 

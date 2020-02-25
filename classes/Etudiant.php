@@ -72,8 +72,30 @@ class Etudiant {
     function updateGroupeEtu($etudiant_id, $groupe_id) {
         $db = new DBClass('gestion_absence');
 
-        $switch_groupe = $db->updateGroupeEtu($etudiant_id, $groupe_id);
+        $db->updateGroupeEtu($etudiant_id, $groupe_id);
 
         header('Location: ../php/groupes.php');
+    }
+
+    function EtuByClasse($idClasse) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuByClasse($idClasse);
+
+    }
+
+    function EtuById($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuById($id);
+
+    }
+
+    function changeClasseEtu($idClasse, $idEtu) {
+        $db = new DBClass('gestion_absence');
+
+        $db->updateClasseEtu($idClasse, $idEtu);
+
+        header('Location: ../php/admin.php');
     }
 }

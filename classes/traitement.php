@@ -66,7 +66,6 @@
         $groupe = $_POST['groupe'];
         $badge = $_POST['badge'];
 
-
         $etu->createEtudiant($nom, $prenom, $formation, $groupe, $badge);
     }
 
@@ -104,4 +103,18 @@
         $classe = $_POST['classe'];
 
         $cours->createCours($matricule, $nom, $classe);
+    }
+
+    if(isset($_POST['select_etu_classe'])) {
+
+        $etu->etuByClasse($_POST['classe']) ;
+
+        header('Location: ../php/passage.php?id='.$_POST['classe']);
+    }
+
+    if(isset($_POST['changer_classe_etu'])) {
+        foreach ($_POST["tableau"] as $key => $value) {
+
+            $etu->changeClasseEtu($_POST['classe'], $value);
+        }
     }

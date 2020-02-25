@@ -114,7 +114,8 @@ class DBClass
         $i = 0;
 
         $req = $this->getPDO()->query("select etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence, groupe.nom as nomGroup
-                                                from etudiant inner join groupe on groupe.idGroupe = etudiant.groupe_id");
+                                                from etudiant inner join groupe on groupe.idGroupe = etudiant.groupe_id
+                                                order by etudiant.formation asc, etudiant.nom asc");
 
         $req->execute();
 
@@ -194,26 +195,35 @@ class DBClass
     public function selectEtuByClasse($classe) {
         $list_etu = array();
         $i = 0;
-
-        if($req = $this->getPDO()->prepare('select idEtu, prenom, etudiant.nom from etudiant 
+        echo 'Je suis un entier';
+        if (!is_numeric($classe)) {
+            echo 'Je suis une chaine de caracteres';
+            echo 'Je suis un entier';
+            if($req = $this->getPDO()->prepare('select idEtu, prenom, etudiant.nom from etudiant 
                                                      inner join groupe on groupe.idGroupe = etudiant.groupe_id
                                                      where groupe.nom = ? order by nom asc')) {
-            $req->execute(array($classe));
-
-            while($donnees = $req->fetch()) {
-                $list_etu[$i] = array(
-                    'idEtu' => $donnees['idEtu'],
-                    'prenom' => $donnees['prenom'],
-                    'nom' => $donnees['nom']
-                );
-                $i++;
+                $req->execute(array($classe));
             }
-            $req->closeCursor();
-            return $list_etu;
-        } else {
-            $req->closeCursor();
-            return 0;
+        } else  {
+
+
+            if ($req = $this->getPDO()->prepare('select idEtu, prenom, nom from etudiant 
+                                                         where classe_id = ? order by nom asc')) {
+                $req->execute(array($classe));
+
+            }
         }
+        while($donnees = $req->fetch()) {
+            $list_etu[$i] = array(
+                'idEtu' => $donnees['idEtu'],
+                'prenom' => $donnees['prenom'],
+                'nom' => $donnees['nom']
+            );
+            $i++;
+        }
+        $req->closeCursor();
+        return $list_etu;
+
     }
 
     public function selectGroupByClasse($classe) {
@@ -333,18 +343,23 @@ class DBClass
         ));
         $datas = $req->fetch();
 
+        echo $datas['idClasse'].' ';
+
 
         //récupération de l'id du groupe
-        $id_groupe = $this->getPDO()->prepare("select idGroupe from groupe where classe_id = :id");
+        $id_groupe = $this->getPDO()->prepare("select idGroupe from groupe where classe_id = :id and nom = :nom");
         $id_groupe->execute(array(
-            'id' => $datas['idClasse']
+            'id' => $datas['idClasse'],
+            'nom' => $groupe
         ));
         $datas_groupe = $id_groupe->fetch();
 
-        $query = $this->getPDO()->prepare("insert into etudiant(idEtu, prenom, nom, formation, nbr_absence, absence_justifiee, classe_id, groupe_id, badge_id) values 
+        echo $datas_groupe['idGroupe'];
+
+        $query = $this->getPDO()->prepare("insert into etudiant(idEtu, prenom, nom, formation, nbr_absence, absence_justifiee, classe_id, groupe_id, badge_id) values
                                                     (default, :prenom, :nom, :formation, 0, 0, :classe, :groupe, :badge)");
 
-        echo $prenom . ' ' . $nom . ' ' . $formation . ' ' . $datas['idClasse'] . ' ' . $datas_groupe['idGroupe'] . ' ' . $badge;
+        //echo $prenom . ' ' . $nom . ' ' . $formation . ' ' . $datas['idClasse'] . ' ' . $datas_groupe['idGroupe'] . ' ' . $badge;
 
         $query->execute(array(
             'prenom' => $prenom,
@@ -597,6 +612,41 @@ class DBClass
 
         $idClasse->closeCursor();
         $query->closeCursor();
+    }
+
+    function selectEtuById($id) {
+        $etudiant = array();
+
+        $query = $this->getPDO()->prepare("select idEtu, nom, prenom, formation from etudiant where idEtu = :id order by nom asc");
+        $query->execute(array('id' => $id));
+
+        $datas = $query->fetch();
+
+
+        $etudiant['id'] = $datas['idEtu'];
+        $etudiant['nom'] = $datas['nom'];
+        $etudiant['prenom'] = $datas['prenom'];
+        $etudiant['formation'] = $datas['formation'];
+
+        $query->closeCursor();
+
+        return $etudiant;
+    }
+
+    function updateClasseEtu($idClasse, $idEtu) {
+        $nomClasse = $this->getPDO()->prepare("select nom from classe where idClasse = :idClasse");
+        $nomClasse->execute(array('idClasse' => $idClasse));
+
+        $data = $nomClasse->fetch();
+
+        $update = $this->getPDO()->prepare("update etudiant
+                                                      set classe_id = :idClasse, formation = :formation
+                                                      where idEtu = :idEtu");
+        $update->execute(array(
+            'idClasse' => $idClasse,
+            'formation' => $data['nom'],
+            'idEtu' => $idEtu
+        ));
     }
 
 }
