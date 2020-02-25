@@ -9,6 +9,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     $list_cours = $cours->allCours();
 ?>
 
+    <a href="ajouter.php?type=cours" class="btn btn-primary">Ajouter un cours</a>
     <table class="table" id="table">
         <thead class="thead-dark">
         <tr>

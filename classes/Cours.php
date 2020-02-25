@@ -37,4 +37,12 @@ class Cours
 
         header('Location: ../php/cours.php');
     }
+
+    function createCours($matricule, $nom, $classe) {
+        $db = new DBClass('gestion_absence');
+
+        $db->insertCours($matricule, $nom, $classe);
+
+        header('Location: ../php/cours.php');
+    }
 }

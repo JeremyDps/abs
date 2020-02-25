@@ -195,7 +195,9 @@ class DBClass
         $list_etu = array();
         $i = 0;
 
-        if($req = $this->getPDO()->prepare('select idEtu, prenom, nom from etudiant where formation = ? order by nom asc')) {
+        if($req = $this->getPDO()->prepare('select idEtu, prenom, etudiant.nom from etudiant 
+                                                     inner join groupe on groupe.idGroupe = etudiant.groupe_id
+                                                     where groupe.nom = ? order by nom asc')) {
             $req->execute(array($classe));
 
             while($donnees = $req->fetch()) {
@@ -515,7 +517,7 @@ class DBClass
         $i = 0;
 
         $query = $this->getPDO()->query("select cours.idCours, cours.matricule, cours.nom, classe.nom as nomClasse from cours
-                                                    inner join classe on classe.idClasse = cours.classe_id");
+                                                    inner join classe on classe.idClasse = cours.classe_id order by classe.nom");
 
         while($datas = $query->fetch()) {
             $list_cours[$i] = array(
@@ -575,6 +577,26 @@ class DBClass
             'nom' => $nom,
             'classe_id' => $datas['idClasse']
         ));
+    }
+
+    function insertCours($matricule, $nom, $classe) {
+        $idClasse = $this->getPDO()->prepare("select idClasse from classe where nom = :nom");
+        $idClasse->execute(array(
+            'nom' => $classe
+        ));
+        $datas = $idClasse->fetch();
+
+        $query = $this->getPDO()->prepare("insert into cours(idCours, matricule, nom, classe_id) values 
+                                                    (default, :matricule, :nom, :classe_id)");
+
+        $query->execute(array(
+            'matricule' => $matricule,
+            'nom' => $nom,
+            'classe_id' => $datas['idClasse']
+        ));
+
+        $idClasse->closeCursor();
+        $query->closeCursor();
     }
 
 }

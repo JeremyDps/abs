@@ -89,11 +89,19 @@
         $classes->createGroupe($nom, $classe);
     }
 
-if(isset($_POST['modifier_cours'])) {
-    $matricule = $_POST['matricule'];
-    $nom = $_POST['nom'];
-    $classe = $_POST['classe'];
+    if(isset($_POST['modifier_cours'])) {
+        $matricule = $_POST['matricule'];
+        $nom = $_POST['nom'];
+        $classe = $_POST['classe'];
 
 
-    $cours->updateCours($matricule, $nom, $classe);
-}
+        $cours->updateCours($matricule, $nom, $classe);
+    }
+
+    if(isset($_POST['create_cours'])) {
+        $matricule = $_POST['matricule'];
+        $nom = $_POST['nom'];
+        $classe = $_POST['classe'];
+
+        $cours->createCours($matricule, $nom, $classe);
+    }
