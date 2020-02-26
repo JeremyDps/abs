@@ -176,6 +176,11 @@ class DBClass
     public function searchStudent($recherche) {
         $coordonneesEtu = array();
         $i = 0;
+        $valeurGroupe = '';
+
+        $groupe = $this->getPDO()->query("select count(*) from groupe");
+        $groupe->execute();
+        $nbr_groupes = $groupe->fetch();
 
         if($req = $this->getPDO()->prepare("select * from etudiant where idEtu=:recherche or nom=:recherche or prenom=:recherche or formation=:recherche")) {
             $req->execute(array(
@@ -183,13 +188,19 @@ class DBClass
             ));
 
             while($donnees = $req->fetch()) {
+                if($donnees['groupe_id'] < 1 || $donnees['groupe_id'] > $nbr_groupes['count(*)']) {
+                    $valeurGroupe = 'Aucun groupe';
+                }
                 $coordonneesEtu[$i] = array(
                     'idEtu' => $donnees['idEtu'],
                     'nom' => $donnees['nom'],
                     'prenom' => $donnees['prenom'],
                     'nbr_absence' => $donnees['nbr_absence'],
-                    'formation' => $donnees['formation']
+                    'formation' => $donnees['formation'],
+                    'groupe' => $valeurGroupe
                 );
+
+
                 $i++;
             }
 

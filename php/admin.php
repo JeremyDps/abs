@@ -112,7 +112,11 @@
 
                 <tr>
                     <th scope="row"><?= $etudiant['idEtu']?></th>
-                    <td><a href="profile.php?etu=<?= $etudiant['idEtu'] ?>"><?= $etudiant['nom'] ?></a></td>
+                    <?php if($etudiant['groupe'] != 'Aucun groupe') { ?>
+                        <td><a href="profile.php?pers=<?= $etudiant['idEtu'] ?>&type=etu"><?= $etudiant['nom'] ?></a></td>
+                    <?php } else { ?>
+                        <td><a href="profile.php?pers=<?= $etudiant['idEtu'] ?>&type=etuWithoutGroup"><?= $etudiant['nom'] ?></a></td>
+                    <?php  }  ?>
                     <td><?= $etudiant['prenom'] ?></td>
                     <td><?= $etudiant['nbr_absence'] ?></td>
                     <td><?= $etudiant['formation'] ?></td>

@@ -32,7 +32,6 @@
 <?php
 
     }else{
-    echo 'wesh';
     header('Location: index.php');
     }
 
