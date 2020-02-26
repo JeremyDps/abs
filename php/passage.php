@@ -35,7 +35,6 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     <?php  if(isset($_GET['id'])) {
            $list_etu = $etu->EtuByClasse($_GET['id']);
-           var_dump($list_etu);
     ?>
 
         <table class="table" id="table">

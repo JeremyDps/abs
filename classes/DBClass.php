@@ -195,10 +195,8 @@ class DBClass
     public function selectEtuByClasse($classe) {
         $list_etu = array();
         $i = 0;
-        echo 'Je suis un entier';
         if (!is_numeric($classe)) {
-            echo 'Je suis une chaine de caracteres';
-            echo 'Je suis un entier';
+
             if($req = $this->getPDO()->prepare('select idEtu, prenom, etudiant.nom from etudiant 
                                                      inner join groupe on groupe.idGroupe = etudiant.groupe_id
                                                      where groupe.nom = ? order by nom asc')) {

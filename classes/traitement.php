@@ -51,12 +51,12 @@
 
     if(isset($_POST['valider_cours'])) {
         $classe = $_POST['classe'];
-        $cours = $_POST['cour'];
+        $cours = $_POST['cours'];
         $salle = $_POST['salle'];
 
         $classes->etuByClasse($classe);
 
-        header('Location: ../php/absence.php?classe='.$classe);
+        header('Location: ../php/absence.php?classe='.$classe.'&cours='.$cours.'&salle='.$salle);
     }
 
     if(isset($_POST['create_etu'])) {

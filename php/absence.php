@@ -69,24 +69,33 @@
     </form>
     <br>
     <br>
-    <?php if(isset($_GET['classe'])) {   ?>
-
+    <?php if(isset($_GET['classe'])) {
+        $classee = $_GET['classe'];
+        $cours = $_GET['cours'];
+        $salle = $_GET['salle'];
+        ?>
+    <p>Classe : <strong><?php  echo $classee;  ?></strong>, cours : <strong><?php  echo $cours;  ?></strong>, salle : <strong><?php  echo $salle;  ?></strong></p>
     <table class="table" id="table">
         <thead class="thead-dark">
         <tr>
             <th scope="col">ID de l'étudiant</th>
             <th scope="col">Nom</th>
             <th scope="col">Prénom</th>
+            <th scope="col">Cochez les absents</th>
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($list_etu as $etudiant): ?>
-        <tr>
-            <th><?= $etudiant['idEtu'] ?></th>
-            <td><?= $etudiant['nom'] ?></td>
-            <td><?= $etudiant['prenom'] ?></td>
-        </tr>
-        <?php endforeach ?>
+            <form method="post" action="recapAbs.php?classe=<?= $classe?>&cours=<?= $cours ?>&salle=<?= $salle ?>">
+                <?php foreach ($list_etu as $etudiant): ?>
+                    <tr>
+                        <th><?= $etudiant['idEtu'] ?></th>
+                        <td><?= $etudiant['nom'] ?></td>
+                        <td><?= $etudiant['prenom'] ?></td>
+                        <td><input type='checkbox' name='tableau[]' value='<?= $etudiant['idEtu'] ?>'/></td>
+                    </tr>
+                <?php endforeach ?>
+                <input class="btn btn-primary" type="submit" name="absents" value="valider les absents">
+            </form>
         </tbody>
     </table>
 
