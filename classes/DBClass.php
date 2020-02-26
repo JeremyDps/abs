@@ -136,16 +136,24 @@ class DBClass
         return $tab_etudiant;
     }
 
-    public function updateEtudiantByUser($abs, $absNonJustifiee, $badge) {
+    public function updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe) {
         session_start();
+
+        $idGroupe = $this->getPDO()->prepare("select idGroupe from groupe where nom = :nom");
+        $idGroupe->execute(array('nom' => $groupe));
+        $datas = $idGroupe->fetch();
+
+        echo '$datas' . '  ' . $datas['idGroupe'];
+
         $req = $this->getPDO()->prepare("update etudiant 
-                                                  set nbr_absence = :abs, absence_justifiee = :absNonJustifiee, badge_id = :badge
+                                                  set nbr_absence = :abs, absence_justifiee = :absNonJustifiee, badge_id = :badge, groupe_id = :groupe_id
                                                   where idEtu = :id");
         $req->execute(array(
             'abs' => $abs,
             'absNonJustifiee' => $absNonJustifiee,
             'badge' => $badge,
-            'id' => $_SESSION['idEtu']
+            'groupe_id' => $datas['idGroupe'],
+            'id' => $_SESSION['idEtu'],
         ));
         echo 'bnjour' . $_SESSION['idEtu'];
         $req->closeCursor();
@@ -272,7 +280,10 @@ class DBClass
     public function selectDetailsEtudiant($id) {
         $list_details = array();
 
-        $query = $this->getPDO()->prepare('SELECT * FROM etudiant where idEtu = ?');
+        $query = $this->getPDO()->prepare('SELECT etudiant.idEtu, etudiant.nom, etudiant.prenom, etudiant.formation, etudiant.nbr_absence,
+                                                    etudiant.absence_justifiee, etudiant.badge_id, groupe.nom as nomGroupe, classe.nom as nomClasse
+                                                    FROM etudiant inner join groupe on groupe.idGroupe = etudiant.groupe_id
+                                                    inner join classe on classe.idClasse = etudiant.classe_id where idEtu = ?');
         $query->execute(array($id));
 
         $datas = $query->fetch();
@@ -283,6 +294,32 @@ class DBClass
         $list_details['formation'] = $datas['formation'];
         $list_details['nbr_absence'] = $datas['nbr_absence'];
         $list_details['absence_justifiee'] = $datas['absence_justifiee'];
+        $list_details['groupe'] = $datas['nomGroupe'];
+        $list_details['classe'] = $datas['nomClasse'];
+        $list_details['badge'] = $datas['badge_id'];
+
+        $query->closeCursor();
+
+        return $list_details;
+    }
+
+    function selectDetailsEtudiantWithoutGroupe($id) {
+        $list_details = array();
+
+        $query = $this->getPDO()->prepare('SELECT etudiant.idEtu, etudiant.nom, etudiant.prenom, etudiant.formation, etudiant.nbr_absence,
+                                                    etudiant.absence_justifiee, etudiant.badge_id, classe.nom as nomClasse
+                                                    FROM etudiant inner join classe on classe.idClasse = etudiant.classe_id where idEtu = ?');
+        $query->execute(array($id));
+
+        $datas = $query->fetch();
+
+        $list_details['id'] = $datas['idEtu'];
+        $list_details['nom'] = $datas['nom'];
+        $list_details['prenom'] = $datas['prenom'];
+        $list_details['formation'] = $datas['formation'];
+        $list_details['nbr_absence'] = $datas['nbr_absence'];
+        $list_details['absence_justifiee'] = $datas['absence_justifiee'];
+        $list_details['classe'] = $datas['nomClasse'];
         $list_details['badge'] = $datas['badge_id'];
 
         $query->closeCursor();
@@ -645,6 +682,34 @@ class DBClass
             'formation' => $data['nom'],
             'idEtu' => $idEtu
         ));
+    }
+
+    function selectEtuWithoutGroup() {
+        $list_etu_sans_groupe = array();
+        $i = 0;
+
+
+
+        $query = $this->getPDO()->query("SELECT idEtu, prenom, nom, formation, nbr_absence 
+                                                  FROM `etudiant` WHERE groupe_id < 1 or groupe_id > (select COUNT(*) from groupe)");
+
+        $query->execute();
+
+        while($datas = $query->fetch()) {
+            $list_etu_sans_groupe[$i] = array(
+                'id' => $datas['idEtu'],
+                'nom' => $datas['nom'],
+                'prenom' => $datas['prenom'],
+                'formation' => $datas['formation'],
+                'nbr_absence' => $datas['nbr_absence'],
+                'groupe' => 'Aucun groupe'
+            );
+
+            $i++;
+        }
+
+        $query->closeCursor();
+        return $list_etu_sans_groupe;
     }
 
 }

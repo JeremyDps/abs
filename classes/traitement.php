@@ -24,8 +24,11 @@
         $absence = $_POST['absence'];
         $absenceNonJustifiee = $_POST['absenceNonJustifiee'];
         $badge = $_POST['badge'];
+        $groupe = $_POST['groupe'];
 
-        $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge);
+        echo $groupe;
+
+        $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge, $groupe);
     }
 
     if(isset($_POST['modifier_prof'])) {

@@ -27,9 +27,6 @@
         );
         $i++;
     }
-
-    var_dump($tabAbsents);
-
 ?>
 
 <?php

@@ -13,9 +13,12 @@ if ($_GET['type'] === 'prof') {
 }else if ($_GET['type'] === 'etu'){
 
     require_once '../classes/Etudiant.php';
+    require_once '../classes/Classe.php';
     $etu = new Etudiant();
+    $classe = new Classe();
     $_SESSION['idEtu'] = $_GET['pers'];
     $coordonnees = $etu->detailsEtudiaant($_GET['pers']);
+    $list_classes = $classe->groupeByClasse($coordonnees['classe']);
 
 } else if($_GET['type'] === 'cours') {
 
@@ -26,6 +29,16 @@ if ($_GET['type'] === 'prof') {
     $_SESSION['idCours'] = $_GET['pers'];
     $coordonnees = $cours->detailsCours($_GET['pers']);
     $list_classe = $classe->allClasses();
+} else if($_GET['type'] === 'etuWithoutGroup') {
+
+    require_once '../classes/Etudiant.php';
+    require_once '../classes/Classe.php';
+    $etu = new Etudiant();
+    $classe = new Classe();
+    $_SESSION['idEtu'] = $_GET['pers'];
+    $coordonnees = $etu->detailsEtudiaant($_GET['pers']);
+    $list_classes = $classe->allGroupes();
+
 
 } else {
     echo 'type inconnu';
@@ -42,6 +55,13 @@ if($_GET['type'] === 'etu') {
             <li>Absences: <input name="absence" type="number" value="<?= $coordonnees['nbr_absence'] ?>" required></li>
             <li>Absences non justifiées: <input name="absenceNonJustifiee" type="number" value="<?= $coordonnees['absence_justifiee'] ?>" required></li>
             <li>Badges n° <input name="badge" type="number" value="<?= $coordonnees['badge'] ?>" required></li>
+            <li>Changer le groupe (<strong><?= $coordonnees['groupe'] ?></strong> -- <strong><?= $coordonnees['classe'] ?></strong>)
+                <select id="groupe" name="groupe">
+                    <?php foreach ($list_classes as $c): ?>
+                    <option name="groupe"><?= $c['groupe'] ?></option>
+                    <?php  endforeach  ?>
+                </select>
+            </li>
         </ul>
         <input name="modifier_etu" class="btn btn-primary" type="submit">
     </form>
@@ -85,6 +105,26 @@ if($_GET['type'] === 'etu') {
         <input name="modifier_cours" class="btn btn-primary" type="submit">
     </form>
 
-<?php } ?>
+<?php }else if ($_GET['type'] === 'etuWithoutGroup') { ?>
+
+    <form method="post" action="../classes/traitement.php">
+        <ul>
+            <li>Absences: <input name="absence" type="number" value="<?= $coordonnees['nbr_absence'] ?>" required></li>
+            <li>Absences non justifiées: <input name="absenceNonJustifiee" type="number" value="<?= $coordonnees['absence_justifiee'] ?>" required></li>
+            <li>Badges n° <input name="badge" type="number" value="<?= $coordonnees['badge'] ?>" required></li>
+            <li>Changer le groupe : v
+                <select id="groupe" name="groupe">
+                    <?php foreach ($list_classes as $c): ?>
+                        <option name="groupe"><?= $c['nom'] ?></option>
+                    <?php  endforeach  ?>
+                </select>
+            </li>
+        </ul>
+        <input name="modifier_etu" class="btn btn-primary" type="submit">
+    </form>
+
+<?php } else {
+    header('Location: admin.php');
+}
 
 

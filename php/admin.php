@@ -13,6 +13,8 @@
         if(isset($_GET['param'])) {
             $coordonnees_etu = $etu->search($_GET['param']);
         }
+
+        $list_etudiants_sans_groupe = $etu->etuWithoutGroup();
 ?>
 
 <div class = "container">
@@ -60,6 +62,37 @@
 
         </tbody>
     </table>
+
+        <h1> Ici la liste des étudiant sans groupe existant, pensez à les ajouter au plus vite dans un groupe</h1>
+
+        <table class="table" id="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Tag</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Prénom</th>
+                <th scope="col">Nombre d'absences</th>
+                <th scope="col">Formation</th>
+                <th scope="col">Groupe</th>
+                <th scope="col">Supprimer</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($list_etudiants_sans_groupe as $etudiant): ?>
+
+                <tr>
+                    <th scope="row"><?= $etudiant['id']?></th>
+                    <td><a href="profile.php?pers=<?= $etudiant['id'] ?>&type=etuWithoutGroup"><?= $etudiant['nom'] ?></a></td>
+                    <td><?= $etudiant['prenom'] ?></td>
+                    <td><?= $etudiant['nbr_absence'] ?></td>
+                    <td><?= $etudiant['formation'] ?></td>
+                    <td><?= $etudiant['groupe'] ?></td>
+                    <td><a href="delete.php?type=etu&pers=<?= $etudiant['id'] ?>">Supprimer l'étudiant</a> </td>
+                </tr>
+            <?php endforeach ?>
+
+            </tbody>
+        </table>
 
     <?php  }else{
         if(empty($coordonnees_etu)) {

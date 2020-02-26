@@ -35,10 +35,10 @@ class Etudiant {
         return $db->selectAllEtu();
     }
 
-    function updateEtudiant($abs, $absNonJustifiee, $badge) {
+    function updateEtudiant($abs, $absNonJustifiee, $badge, $groupe) {
         $db = new DBClass('gestion_absence');
 
-        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge);
+        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe);
 
         header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
     }
@@ -97,5 +97,17 @@ class Etudiant {
         $db->updateClasseEtu($idClasse, $idEtu);
 
         header('Location: ../php/admin.php');
+    }
+
+    function etuWithoutGroup() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuWithoutGroup();
+    }
+
+    function detailsEtudiantSansGroupe($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectDetailsEtudiantWithoutGroupe($id);
     }
 }

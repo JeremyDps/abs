@@ -1,5 +1,6 @@
 <?php
     session_start();
+if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     include '../classes/DBClass.php';
     require '../layout/header.php';
 
@@ -32,6 +33,12 @@
         require_once '../classes/Cours.php';
         $cours = new Cours();
         $coordonnees = $cours->detailsCours($_GET['pers']);
+
+    } else if($_GET['type'] === 'etuWithoutGroup') {
+
+        require_once '../classes/Etudiant.php';
+        $etu = new Etudiant();
+        $coordonnees = $etu->detailsEtudiantSansGroupe($_GET['pers']);
 
     } else {
         echo 'type inconnu';
@@ -129,5 +136,22 @@
                 <a href="modifier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Modifier</a>
             </div>
 
-    <?php  } ?>
+    <?php  } else if($_GET['type'] === 'etuWithoutGroup') { ?>
+
+            <h1> Profil étudiant de <?= $coordonnees['nom'] ?> <?= $coordonnees['prenom'] ?></h1>
+
+            <div class="container">
+
+                <ul>
+                    <li><?= $coordonnees['formation'] ?></li>
+                    <li>Absences non justifiés : <?= $coordonnees['nbr_absence'] ?></li>
+                    <li>Absences justifiés : <?= $coordonnees['absence_justifiee'] ?></li>
+                    <li>Badges n°<?= $coordonnees['badge']?></li>
+                </ul>
+
+                <a href="modifier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Modifier</a>
+
+    <?php } }else{
+        header('Location: admin.php');
+    }  ?>
 </div>
