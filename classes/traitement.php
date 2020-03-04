@@ -121,3 +121,29 @@
             $etu->changeClasseEtu($_POST['classe'], $value);
         }
     }
+
+    if(isset($_POST['add_classe_prof'])) {
+        $classe_prof = $_POST['classe'];
+
+        $classes->addClasseProf($classe_prof);
+    }
+
+    if(isset($_POST['select_classes_prof'])) {
+        session_start();
+        $classe_prof = $_POST['classe'];
+
+        header('Location: ../php/prof_cours.php?pers='.$_SESSION['prof_id'].'&type=prof&classe='.$classe_prof);
+    }
+
+    if(isset($_POST['add_cours_prof'])) {
+        session_start();
+        foreach ($_POST['tableau'] as $key => $value) {
+            $prof->addCours($_SESSION['prof_id'], $value);
+        }
+    }
+
+    if (isset($_POST['select_cours_prof'])) {
+        session_start();
+
+        header('Location: ../php/prof_cours.php?pers='. $_SESSION['prof_id'] .'&type=prof&select=true');
+    }

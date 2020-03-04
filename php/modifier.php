@@ -6,8 +6,11 @@ require '../layout/header.php';
 if ($_GET['type'] === 'prof') {
 
     require_once '../classes/Prof.php';
+    require_once '../classes/Classe.php';
     $prof = new Prof();
+    $classe = new Classe();
     $coordonnees = $prof->detailsProf($_GET['pers']);
+    $list_classes = $classe->allClasses();
     $_SESSION['idProf'] = $_GET['pers'];
 
 }else if ($_GET['type'] === 'etu'){
@@ -82,6 +85,26 @@ if($_GET['type'] === 'etu') {
                     <option name="prof">Prof</option>
                 </select></li>
         </ul>
+        <table class="table" id="table">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Tag</th>
+                <th scope="col">formation</th>
+                <th scope="col">Cochez les formation à ajouter</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($list_classes as $c): ?>
+
+                <tr>
+                    <th scope="row"><?= $c['id']?></th>
+                    <td><?= $c['nom'] ?></td>
+                    <td><input type='checkbox' name='tableau[]' value='<?= $c['id'] ?>'/></td>
+                </tr>
+            <?php endforeach ?>
+
+            </tbody>
+        </table>
         <input name="modifier_prof" class="btn btn-primary" type="submit">
     </form>
 

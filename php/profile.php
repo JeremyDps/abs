@@ -77,7 +77,9 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
             <li>Nom d'utilisateur : <?= $coordonnees['username'] ?></li>
         </ul>
 
-        <a href="modifier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Modifier</a>
+        <a href="modifier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Modifier</a> <br><br>
+
+        <a class="btn btn-primary" href="prof_cours.php?pers=<?= $_GET['pers'] ?>&type=prof" >Afficher les cours de <?= $coordonnees['nom'] ?> <?= $coordonnees['prenom'] ?></a>
 
     <?php  } else if ($_GET['type'] === 'group') {   ?>
 

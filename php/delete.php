@@ -28,6 +28,10 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         require_once '../classes/Cours.php';
         $cours = new Cours();
         $deleteCours = $cours->deleteCours($_GET['pers']);
+    } else if($_GET['type'] === 'cours_prof'){
+        require_once '../classes/Prof.php';
+        $prof = new Prof();
+        $deleteCoursProf = $prof->deleteCoursProf($_GET['pers'], $_GET['cours']);
     } else {
         echo 'type de personne inconnu';
     }?>

@@ -45,4 +45,10 @@ class Cours
 
         header('Location: ../php/cours.php');
     }
+
+    function coursByClasse($classe) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectCoursByClasse($classe);
+    }
 }

@@ -432,9 +432,11 @@ class DBClass
         $query = $this->getPDO()->prepare("insert into user(id, username, nomUser, prenom, mdp, role) values 
                                                     (default, :username, :nom, :prenom, :password, :role)");
 
-        $userName = strtolower($nom) . '.' . strtolower($prenom);
+        $idProf = $this->getPDO()->prepare("select id from user where username = :username and mdp = :mdp");
 
-        echo $userName;
+        $insert = $this->getPDO()->prepare("insert into professeur (idProf, idUser) values (default, :id)");
+
+        $userName = strtolower($nom) . '.' . strtolower($prenom);
 
         $query->execute(array(
             'username' => $userName,
@@ -444,7 +446,17 @@ class DBClass
             'role' => strtolower($role)
         ));
 
+        $idProf->execute(array(
+            'username' => $userName,
+            'mdp' => $password
+        ));
+
+        $datas = $idProf->fetch();
+
+        $insert->execute(array('id' => $datas['id']));
+
         $query->closeCursor();
+        $insert->closeCursor();
     }
 
     public function deleteProfesseur($id) {
@@ -723,4 +735,142 @@ class DBClass
         return $list_etu_sans_groupe;
     }
 
+    function selectIdProf($nom, $prenom, $password, $role) {
+        $query = $this->getPDO()->prepare("select id from user where nomUser = :nom and prenom = :prenom and mdp = :password and role = :role");
+        $query->execute(array(
+            'nom' => $nom,
+            'prenom' => $prenom,
+            'password' => $password,
+            'role' => $role
+        ));
+
+        $datas = $query->fetch();
+
+        return $datas['id'];
+    }
+
+    function selectClasseByIdProf($id) {
+        $list_classes = array();
+        $i = 0;
+
+        $query = $this->getPDO()->prepare("select classe.nom from classe 
+                                                    inner join prof_classe on classe.idClasse = prof_classe.idClasse
+                                                    inner join professeur on professeur.idProf = prof_classe.idProf 
+                                                    where professeur.idUser = :id");
+
+        $query->execute(array('id' => $id));
+
+        while($datas = $query->fetch()) {
+            $list_classes[$i] = array(
+                'nom' => $datas['nom']
+            );
+
+            $i++;
+        }
+
+        $query->closeCursor();
+        return $list_classes;
+    }
+
+    function insertClasseProf($classe) {
+        $idClasse = $this->getPDO()->prepare("select idClasse from classe where nom = :nom");
+        $idClasse->execute(array('nom' => $classe));
+        $datas = $idClasse->fetch();
+
+        $idProf = $this->getPDO()->prepare("select idProf from professeur where idUser = :id");
+        $idProf->execute(array('id' => $_SESSION['prof_id']));
+        $donnees = $idProf->fetch();
+
+        $query = $this->getPDO()->prepare("insert into prof_classe (idProf, idClasse) values (:prof_id, :classe_id) ");
+        $query->execute(array(
+            'prof_id' => $donnees['idProf'],
+            'classe_id' => $datas['idClasse']
+        ));
+
+        $idClasse->closeCursor();
+        $query->closeCursor();
+
+    }
+
+    function selectCoursByClasse($classe)  {
+        $list_cours = array();
+        $i = 0;
+
+        $idClasse = $this->getPDO()->prepare("select idClasse from classe where nom = :nom");
+        $idClasse->execute(array('nom' => $classe));
+        $datas = $idClasse->fetch();
+
+        $query = $this->getPDO()->prepare("select idCours, matricule, nom from cours where classe_id = :id order by matricule asc");
+        $query->execute(array('id' => $datas['idClasse']));
+
+        while ($donnees = $query->fetch()) {
+            $list_cours[$i] = array(
+                'id' => $donnees['idCours'],
+                'matricule' => $donnees['matricule'],
+                'nom' => $donnees['nom'],
+                'classe' => $classe
+            );
+            $i++;
+        }
+
+        $idClasse->closeCursor();
+        $query->closeCursor();
+
+        return $list_cours;
+    }
+
+    function insertCoursProf($idProf, $idClasse) {
+        $idProfesseur = $this->getPDO()->prepare("select idProf from professeur where idUser = :id");
+        $idProfesseur->execute(array('id' => $idProf));
+        $datas = $idProfesseur->fetch();
+
+
+        $query = $this->getPDO()->prepare("insert into prof_cours(idProf, idCours) values(:idProf, :idClasse)");
+        $query->execute(array(
+            'idProf' => $datas['idProf'],
+            'idClasse' => $idClasse
+        ));
+
+        $query->closeCursor();
+    }
+
+    function selectCoursProf($idProf) {
+        $list_cours = array();
+        $i = 0;
+
+        $idProfesseur = $this->getPDO()->prepare("select idProf from professeur where idUser = :id");
+        $idProfesseur->execute(array('id' => $_SESSION['prof_id']));
+        $donnees = $idProfesseur->fetch();
+
+        $query = $this->getPDO()->prepare("select cours.idCours, cours.matricule, cours.nom, classe.nom as nomClasse
+                                                    from cours inner join prof_cours on prof_cours.idCours = cours.idCours
+                                                    inner join classe on classe.idClasse = cours.classe_id
+                                                    inner join professeur on professeur.idProf = prof_cours.idProf
+                                                    where professeur.idUser = :id");
+        $query->execute(array('id' => $idProf));
+
+        while($datas = $query->fetch()) {
+            $list_cours[$i] = array(
+                'id' => $datas['idCours'],
+                'matricule' => $datas['matricule'],
+                'nom' => $datas['nom'],
+                'classe' => $datas['nomClasse']
+            );
+
+            $i++;
+        }
+
+        $query->closeCursor();
+        return $list_cours;
+    }
+
+    function deleteCoursProf($idProf, $idCours) {
+        $query = $this->getPDO()->prepare("delete from prof_cours where idProf = :idProf and idCours = :idCours");
+        $query->execute(array(
+            'idProf' => $idProf,
+            'idCours' => $idCours
+        ));
+
+        $query->closeCursor();
+    }
 }
