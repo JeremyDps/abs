@@ -23,9 +23,9 @@ class Etudiant {
         $this->classe_id = $classe_id;
     }*/
 
-    function createEtudiant($nom, $prenom, $formation, $groupe, $badge) {
+    function createEtudiant($nom, $prenom, $formation, $groupe, $groupe_tp, $badge) {
         $db = new DBClass('gestion_absence');
-        $db->insertEtudiant($nom, $prenom, $formation, $groupe, $badge);
+        $db->insertEtudiant($nom, $prenom, $formation, $groupe, $groupe_tp, $badge);
 
         header('Location: ../php/admin.php');
     }
@@ -35,12 +35,12 @@ class Etudiant {
         return $db->selectAllEtu();
     }
 
-    function updateEtudiant($abs, $absNonJustifiee, $badge, $groupe) {
+    function updateEtudiant($abs, $absNonJustifiee, $badge, $groupe, $groupe_tp) {
         $db = new DBClass('gestion_absence');
 
-        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe);
+        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe, $groupe_tp);
 
-        header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
+        //header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
     }
 
     function search($recherche) {
@@ -77,6 +77,14 @@ class Etudiant {
         header('Location: ../php/groupes.php');
     }
 
+    function updateGroupeTPEtu($etudiant_id, $groupe_id) {
+        $db = new DBClass('gestion_absence');
+
+        $db->updateGroupeTPEtu($etudiant_id, $groupe_id);
+
+        header('Location: ../php/groupes.php');
+    }
+
     function EtuByClasse($idClasse) {
         $db = new DBClass('gestion_absence');
 
@@ -109,5 +117,11 @@ class Etudiant {
         $db = new DBClass('gestion_absence');
 
         return $db->selectDetailsEtudiantWithoutGroupe($id);
+    }
+
+    function etuByGroupTP($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuByGroupTP($id);
     }
 }

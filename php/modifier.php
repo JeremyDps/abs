@@ -22,6 +22,7 @@ if ($_GET['type'] === 'prof') {
     $_SESSION['idEtu'] = $_GET['pers'];
     $coordonnees = $etu->detailsEtudiaant($_GET['pers']);
     $list_classes = $classe->groupeByClasse($coordonnees['classe']);
+    $list_groupes = $classe->allGroupesTP();
 
 } else if($_GET['type'] === 'cours') {
 
@@ -41,6 +42,7 @@ if ($_GET['type'] === 'prof') {
     $_SESSION['idEtu'] = $_GET['pers'];
     $coordonnees = $etu->detailsEtudiaant($_GET['pers']);
     $list_classes = $classe->allGroupes();
+    $list_groupes = $classe->allGroupesTP();
 
 
 } else {
@@ -58,10 +60,17 @@ if($_GET['type'] === 'etu') {
             <li>Absences: <input name="absence" type="number" value="<?= $coordonnees['nbr_absence'] ?>" required></li>
             <li>Absences non justifiées: <input name="absenceNonJustifiee" type="number" value="<?= $coordonnees['absence_justifiee'] ?>" required></li>
             <li>Badges n° <input name="badge" type="number" value="<?= $coordonnees['badge'] ?>" required></li>
-            <li>Changer le groupe (<strong><?= $coordonnees['groupe'] ?></strong> -- <strong><?= $coordonnees['classe'] ?></strong>)
+            <li>Changer le groupe TD (<strong><?= $coordonnees['tp'] ?></strong> -- <strong><?= $coordonnees['groupe'] ?></strong> -- <strong><?= $coordonnees['classe'] ?></strong>)
                 <select id="groupe" name="groupe">
                     <?php foreach ($list_classes as $c): ?>
                     <option name="groupe"><?= $c['groupe'] ?></option>
+                    <?php  endforeach  ?>
+                </select>
+            </li>
+            <li>Changer le groupe TP
+                <select id="groupe_tp" name="groupe_tp">
+                    <?php foreach ($list_groupes as $c): ?>
+                        <option name="groupe_tp"><?= $c['nom'] ?></option>
                     <?php  endforeach  ?>
                 </select>
             </li>
@@ -135,10 +144,17 @@ if($_GET['type'] === 'etu') {
             <li>Absences: <input name="absence" type="number" value="<?= $coordonnees['nbr_absence'] ?>" required></li>
             <li>Absences non justifiées: <input name="absenceNonJustifiee" type="number" value="<?= $coordonnees['absence_justifiee'] ?>" required></li>
             <li>Badges n° <input name="badge" type="number" value="<?= $coordonnees['badge'] ?>" required></li>
-            <li>Changer le groupe : v
+            <li>Changer le groupe TD :
                 <select id="groupe" name="groupe">
                     <?php foreach ($list_classes as $c): ?>
                         <option name="groupe"><?= $c['nom'] ?></option>
+                    <?php  endforeach  ?>
+                </select>
+            </li>
+            <li>Changer le groupe TP
+                <select id="groupe_tp" name="groupe_tp">
+                    <?php foreach ($list_groupes as $c): ?>
+                        <option name="groupe_tp"><?= $c['nom'] ?></option>
                     <?php  endforeach  ?>
                 </select>
             </li>

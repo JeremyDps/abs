@@ -43,6 +43,7 @@
             <th scope="col">Nombre d'absences</th>
             <th scope="col">Formation</th>
             <th scope="col">Groupe</th>
+            <th scope="col">TP</th>
             <th scope="col">Supprimer</th>
         </tr>
         </thead>
@@ -56,6 +57,7 @@
             <td><?= $etudiant['nbr_absence'] ?></td>
             <td><?= $etudiant['formation'] ?></td>
             <td><?= $etudiant['groupe'] ?></td>
+            <td><?= $etudiant['tp'] ?></td>
             <td><a href="delete.php?type=etu&pers=<?= $etudiant['idEtu'] ?>">Supprimer l'étudiant</a> </td>
         </tr>
         <?php endforeach ?>

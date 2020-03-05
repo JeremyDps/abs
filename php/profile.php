@@ -24,9 +24,6 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         require_once '../classes/Etudiant.php';
         $group = new Classe();
         $etu = new Etudiant();
-        $coordonnees = $group->groupById($_GET['pers']);
-
-        $list_etu = $etu->etuByGroup($coordonnees['id']);
 
     } else if($_GET['type'] === 'cours') {
 
@@ -82,7 +79,15 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
         <a class="btn btn-primary" href="prof_cours.php?pers=<?= $_GET['pers'] ?>&type=prof" >Afficher les cours de <?= $coordonnees['nom'] ?> <?= $coordonnees['prenom'] ?></a>
 
-    <?php  } else if ($_GET['type'] === 'group') {   ?>
+    <?php  } else if ($_GET['type'] === 'group') {
+        if(stristr($_GET['groupe'], 'TP')) {
+            $coordonnees = $group->groupTPById($_GET['pers']);
+            $list_etu = $etu->etuByGroupTP($coordonnees['id']);
+        } else {
+            $coordonnees = $group->groupById($_GET['pers']);
+            $list_etu = $etu->etuByGroup($coordonnees['id']);
+        }
+    ?>
 
         <h1> Groupe <?= $coordonnees['nom'] ?></h1>
 

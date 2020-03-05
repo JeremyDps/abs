@@ -16,6 +16,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
      $classes = $classe->allClasses();
      $groupes = $classe->allGroupes();
+     $tp = $classe->allGroupesTP();
  ?>
 
  <form action="../classes/traitement.php" method="post">
@@ -29,9 +30,15 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
             <option name="<?= $c['nom'] ?>"><?php echo $c['nom'] ?></option>
         <?php endforeach  ?>
      </select>  <br>
-     <label name="groupe"> Groupe : </label>
+     <label name="groupe"> Groupe TD: </label>
      <select id="groupe" name="groupe">
          <?php foreach($groupes as $g):  ?>
+             <option name="<?= $g['nom'] ?>"><?php echo $g['nom'] ?></option>
+         <?php endforeach  ?>
+     </select>  <br>
+     <label name="groupe_tp"> Groupe TP: </label>
+     <select id="groupe_tp" name="groupe_tp">
+         <?php foreach($tp as $g):  ?>
              <option name="<?= $g['nom'] ?>"><?php echo $g['nom'] ?></option>
          <?php endforeach  ?>
      </select>  <br>

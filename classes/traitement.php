@@ -25,10 +25,11 @@
         $absenceNonJustifiee = $_POST['absenceNonJustifiee'];
         $badge = $_POST['badge'];
         $groupe = $_POST['groupe'];
+        $groupe_tp = $_POST['groupe_tp'];
 
         echo $groupe;
 
-        $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge, $groupe);
+        $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge, $groupe, $groupe_tp);
     }
 
     if(isset($_POST['modifier_prof'])) {
@@ -67,9 +68,10 @@
         $prenom = $_POST['prenom'];
         $formation = $_POST['formation'];
         $groupe = $_POST['groupe'];
+        $groupe_tp = $_POST['groupe_tp'];
         $badge = $_POST['badge'];
 
-        $etu->createEtudiant($nom, $prenom, $formation, $groupe, $badge);
+        $etu->createEtudiant($nom, $prenom, $formation, $groupe, $groupe_tp, $badge);
     }
 
     if(isset($_POST['create_prof'])) {
@@ -87,8 +89,30 @@
         $nom = $_POST['nom'];
         $classe = $_POST['classe'];
 
+        if(stristr($nom, 'TP')) {
+            if(stristr($nom, '1')) {
+                if(stristr($nom, 'TPA') || stristr($nom, 'TPB')) {
+                    $classe = "DUT1 TD1";
+                } else if(stristr($nom, 'TPC') || stristr($nom, 'TPD')) {
+                    $classe = "DUT1 TD2";
+                } else if(stristr($nom, 'TPE') || stristr($nom, 'TPF')) {
+                    $classe = "DUT1 TD3";
+                }
+                $classes->createGroupeTP($nom, $classe);
+            } else if (stristr($nom, '2')) {
+                if(stristr($nom, 'TPA') || stristr($nom, 'TPB')) {
+                    $classe = "DUT2 TD1";
+                } else if(stristr($nom, 'TPC') || stristr($nom, 'TPD')) {
+                    $classe = "DUT2 TD2";
+                } else if(stristr($nom, 'TPE') || stristr($nom, 'TPF')) {
+                    $classe = "DUT2 TD3";
+                }
+                $classes->createGroupe($nom, $classe);
+            }
 
-        $classes->createGroupe($nom, $classe);
+        }
+
+
     }
 
     if(isset($_POST['modifier_cours'])) {
@@ -146,4 +170,10 @@
         session_start();
 
         header('Location: ../php/prof_cours.php?pers='. $_SESSION['prof_id'] .'&type=prof&select=true');
+    }
+
+    if(isset($_POST['groupes_by_classe'])) {
+        $classe = $_POST['classe'];
+
+        header('Location: ../php/groupes.php?classe='.$classe);
     }

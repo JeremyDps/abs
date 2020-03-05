@@ -50,9 +50,8 @@ class Classe{
         $db = new DBClass("gestion_absence");
 
         $db->deleteGroupe($id);
-        echo $id;
 
-        //header('Location: ../php/admin.php');
+        header('Location: ../php/admin.php');
     }
 
     function groupById($id) {
@@ -77,5 +76,45 @@ class Classe{
         $db->insertClasseProf($classe);
 
         header('Location: ../php/prof_cours?pers=' . $_SESSION['prof_id']. '&type=prof');
+    }
+
+    function allGroupesTP() {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectAllGroupesTP();
+    }
+
+    function selectGroupeByClasse($classe) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectGroupeByClasse($classe);
+    }
+
+    function selectGroupeById($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectGroupeById($id);
+    }
+
+    function groupTPById($id) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectGroupeTPById($id);
+    }
+
+    function createGroupeTP($nom, $groupe_td) {
+        $db = new DBClass('gestion_absence');
+
+        $db->insertGroupeTP($nom, $groupe_td);
+
+        header('Location: ../php/groupes.php');
+    }
+
+    function deleteGroupeTP($id) {
+        $db = new DBClass("gestion_absence");
+
+        $db->deleteGroupeTP($id);
+
+        header('Location: ../php/admin.php');
     }
 }

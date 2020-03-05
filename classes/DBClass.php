@@ -9,7 +9,7 @@ class DBClass
     private $db_host;
     private $pdo;
 
-    public function __construct($db_name, $db_user = 'root', $db_pass = '', $db_host = 'localhost:3308')
+    public function __construct($db_name, $db_user = 'root', $db_pass = '', $db_host = 'localhost')
     {
         $this->db_name = $db_name;
         $this->db_user = $db_user;
@@ -113,8 +113,9 @@ class DBClass
         $tab_etudiant = array();
         $i = 0;
 
-        $req = $this->getPDO()->query("select etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence, groupe.nom as nomGroup
+        $req = $this->getPDO()->query("select etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence, groupe.nom as nomGroup, groupe_tp.nom as tp
                                                 from etudiant inner join groupe on groupe.idGroupe = etudiant.groupe_id
+                                                inner join groupe_tp on groupe_tp.idGroupeTP = etudiant.groupe_tp_id
                                                 order by etudiant.formation asc, etudiant.nom asc");
 
         $req->execute();
@@ -127,6 +128,7 @@ class DBClass
                 'nom' => $donnees['nom'],
                 'formation' => $donnees['formation'],
                 'groupe' => $donnees['nomGroup'],
+                'tp' => $donnees['tp'],
                 'nbr_absence' => $donnees['nbr_absence'],
             );
 
@@ -136,23 +138,28 @@ class DBClass
         return $tab_etudiant;
     }
 
-    public function updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe) {
+    public function updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe, $groupe_tp) {
         session_start();
 
         $idGroupe = $this->getPDO()->prepare("select idGroupe from groupe where nom = :nom");
         $idGroupe->execute(array('nom' => $groupe));
         $datas = $idGroupe->fetch();
 
+        $idGroupeTP = $this->getPDO()->prepare("select idGroupeTP from groupe_tp where nom = :nom");
+        $idGroupeTP->execute(array('nom' => $groupe_tp));
+        $datas_tp = $idGroupeTP->fetch();
+
         echo '$datas' . '  ' . $datas['idGroupe'];
 
         $req = $this->getPDO()->prepare("update etudiant 
-                                                  set nbr_absence = :abs, absence_justifiee = :absNonJustifiee, badge_id = :badge, groupe_id = :groupe_id
+                                                  set nbr_absence = :abs, absence_justifiee = :absNonJustifiee, badge_id = :badge, groupe_id = :groupe_id, groupe_tp_id = :groupe_tp  
                                                   where idEtu = :id");
         $req->execute(array(
             'abs' => $abs,
             'absNonJustifiee' => $absNonJustifiee,
             'badge' => $badge,
             'groupe_id' => $datas['idGroupe'],
+            'groupe_tp' => $datas_tp['idGroupeTP'],
             'id' => $_SESSION['idEtu'],
         ));
         echo 'bnjour' . $_SESSION['idEtu'];
@@ -292,9 +299,10 @@ class DBClass
         $list_details = array();
 
         $query = $this->getPDO()->prepare('SELECT etudiant.idEtu, etudiant.nom, etudiant.prenom, etudiant.formation, etudiant.nbr_absence,
-                                                    etudiant.absence_justifiee, etudiant.badge_id, groupe.nom as nomGroupe, classe.nom as nomClasse
+                                                    etudiant.absence_justifiee, etudiant.badge_id, groupe.nom as nomGroupe, groupe_tp.nom as nomTP, classe.nom as nomClasse
                                                     FROM etudiant inner join groupe on groupe.idGroupe = etudiant.groupe_id
-                                                    inner join classe on classe.idClasse = etudiant.classe_id where idEtu = ?');
+                                                    inner join classe on classe.idClasse = etudiant.classe_id 
+                                                    inner join groupe_tp on groupe_tp.classe_td_id = groupe.idgroupe where idEtu = ?');
         $query->execute(array($id));
 
         $datas = $query->fetch();
@@ -307,6 +315,7 @@ class DBClass
         $list_details['absence_justifiee'] = $datas['absence_justifiee'];
         $list_details['groupe'] = $datas['nomGroupe'];
         $list_details['classe'] = $datas['nomClasse'];
+        $list_details['tp'] = $datas['nomTP'];
         $list_details['badge'] = $datas['badge_id'];
 
         $query->closeCursor();
@@ -380,7 +389,7 @@ class DBClass
         }
     }
 
-    public function insertEtudiant($nom, $prenom, $formation, $groupe, $badge) {
+    public function insertEtudiant($nom, $prenom, $formation, $groupe, $groupe_tp, $badge) {
 
         //récupération de l'id de la classe;
         $req = $this->getPDO()->prepare("select idClasse from classe where nom = :nom");
@@ -402,8 +411,14 @@ class DBClass
 
         echo $datas_groupe['idGroupe'];
 
-        $query = $this->getPDO()->prepare("insert into etudiant(idEtu, prenom, nom, formation, nbr_absence, absence_justifiee, classe_id, groupe_id, badge_id) values
-                                                    (default, :prenom, :nom, :formation, 0, 0, :classe, :groupe, :badge)");
+        $id_groupe_tp = $this->getPDO()->prepare("select idGroupeTP from groupe_tp where classe_td_id = :id");
+        $id_groupe_tp->execute(array(
+            'id' => $datas_groupe['idGroupe'],
+        ));
+        $datas_groupe_tp = $id_groupe_tp->fetch();
+
+        $query = $this->getPDO()->prepare("insert into etudiant(idEtu, prenom, nom, formation, nbr_absence, absence_justifiee, classe_id, groupe_id, groupe_tp_id, badge_id) values
+                                                    (default, :prenom, :nom, :formation, 0, 0, :classe, :groupe, :groupe_tp, :badge)");
 
         //echo $prenom . ' ' . $nom . ' ' . $formation . ' ' . $datas['idClasse'] . ' ' . $datas_groupe['idGroupe'] . ' ' . $badge;
 
@@ -413,6 +428,7 @@ class DBClass
             'formation' => $formation,
             'classe' => $datas['idClasse'],
             'groupe' => $datas_groupe['idGroupe'],
+            'groupe_tp' => $datas_groupe_tp['idGroupeTP'],
             'badge' => $badge
         ));
 
@@ -713,8 +729,8 @@ class DBClass
 
 
 
-        $query = $this->getPDO()->query("SELECT idEtu, prenom, nom, formation, nbr_absence 
-                                                  FROM `etudiant` WHERE groupe_id < 1 or groupe_id > (select COUNT(*) from groupe)");
+        $query = $this->getPDO()->query("SELECT idEtu, prenom, nom, formation, nbr_absence FROM `etudiant` 
+                                                  WHERE groupe_id < 1 or groupe_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp)");
 
         $query->execute();
 
@@ -872,5 +888,136 @@ class DBClass
         ));
 
         $query->closeCursor();
+    }
+
+    function selectAllGroupesTP() {
+        $list_groupes = array();
+        $i = 0;
+
+        $query = $this->getPDO()->query("select * from groupe_tp");
+        $query->execute();
+        while ($datas = $query->fetch()) {
+            $list_groupes[$i] = array(
+                'nom' => $datas['nom']
+            );
+            $i++;
+        }
+
+        $query->closeCursor();
+        return $list_groupes;
+    }
+
+    function selectGroupeByClasse($classe) {
+        $list_groupes = array();
+        $i = 0;
+
+        $td = $this->getPDO()->prepare("select groupe.idGroupe, groupe.nom from groupe
+                                                 inner join classe on classe.idClasse = groupe.classe_id
+                                                 where classe.nom = :nom");
+        $td->execute(array('nom' => $classe));
+
+        while($datas = $td->fetch()) {
+            $list_groupes[$i] = array(
+                'id' => $datas['idGroupe'],
+                'nom' => $datas['nom']
+            );
+            $i++;
+        }
+
+        $tp = $this->getPDO()->prepare("select groupe_tp.idGroupeTP, groupe_tp.nom from groupe_tp 
+                                                 inner join groupe on groupe.idGroupe = groupe_tp.classe_td_id
+                                                 inner join classe on classe.idClasse = groupe.classe_id
+                                                 where classe.nom = :nom");
+        $tp->execute(array('nom' => $classe));
+
+        while($datas_tp = $tp->fetch()) {
+            $list_groupes[$i] = array(
+                'id' => $datas_tp['idGroupeTP'],
+                'nom' => $datas_tp['nom']
+            );
+            $i++;
+        }
+
+        $td->closeCursor();
+        $tp->closeCursor();
+
+        return $list_groupes;
+
+    }
+
+    function selectGroupeTPById($id) {
+        $groupe = array();
+        $query = $this->getPDO()->prepare("select groupe_tp.idGroupeTP, groupe_tp.nom, classe.nom as classe from groupe_tp
+                                                    inner join groupe on groupe.idGroupe = groupe_tp.classe_td_id
+                                                    inner join classe on classe.idClasse = groupe.classe_id
+                                                    where groupe_tp.idGroupeTP = :id ");
+        $query->execute(array('id' => $id));
+        $datas = $query->fetch();
+
+        $groupe['id'] = $datas['idGroupeTP'];
+        $groupe['nom'] = $datas['nom'];
+        $groupe['classe'] = $datas['classe'];
+
+        $query->closeCursor();
+        return $groupe;
+    }
+
+    function selectEtuByGroupTP($id) {
+        $list_etu = array();
+        $i = 0;
+
+        $query = $this->getPDO()->prepare("select idEtu, nom, prenom from etudiant where groupe_tp_id = :id");
+        $query->execute(array('id' => $id));
+
+        while($donnees = $query->fetch()) {
+            $list_etu[$i] = array(
+                'id' => $donnees['idEtu'],
+                'nom' => $donnees['nom'],
+                'prenom' => $donnees['prenom']
+            );
+
+            $i++;
+        }
+
+        return $list_etu;
+    }
+
+    function updateGroupeTPEtu($etudiant_id, $groupe_id) {
+        $query = $this->getPDO()->prepare("update etudiant set groupe_tp_id = :groupe_id where etudiant.idEtu = :etudiant_id");
+        $query->execute(array(
+            'groupe_id' => $groupe_id,
+            'etudiant_id' => $etudiant_id
+        ));
+    }
+
+    function insertGroupeTP($nom, $groupe_td) {
+        echo $groupe_td;
+        $req = $this->getPDO()->prepare("select idGroupe from groupe where nom = :groupe_td");
+        $req->execute(array(
+            'groupe_td' => $groupe_td
+        ));
+        $datas = $req->fetch();
+
+        $query = $this->getPDO()->prepare("insert into groupe_tp(idGroupeTP, nom, classe_td_id) values 
+                                                    (default, :nom, :classe_id)");
+        $query->execute(array(
+            'nom' => $nom,
+            'classe_id' => $datas['idGroupe']
+        ));
+
+        $req->closeCursor();
+        $query->closeCursor();
+    }
+
+    function deleteGroupeTP($id) {
+        $query = $this->getPDO()->prepare("delete from groupe_tp where idGroupeTP = :id");
+        $query->execute(array(
+            'id' => $id
+        ));
+
+        $update = $this->getPDO()->prepare("update etudiant set groupe_tp_id = 0 where groupe_tp_id = :id");
+        $update->execute(array(
+            'id' => $id
+        ));
     }
 }

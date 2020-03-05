@@ -32,7 +32,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
                 <td><?= $etudiant['prenom'] ?></td>
                 <td><?= $etudiant['nbr_absence'] ?></td>
                 <td><?= $etudiant['formation'] ?></td>
-                <td><a href="switch.php?pers=<?= $etudiant['idEtu'] ?>&target=<?= $_GET['pers'] ?>">Changer l'étudiant de groupe vers <?php echo $_GET['type']; ?></a></td>
+                <td><a href="switch.php?pers=<?= $etudiant['idEtu'] ?>&target=<?= $_GET['pers'] ?>&groupe=<?= $_GET['type'] ?>">Changer l'étudiant de groupe vers <?php echo $_GET['type']; ?></a></td>
             </tr>
         <?php endforeach ?>
 

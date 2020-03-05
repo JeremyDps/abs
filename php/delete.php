@@ -22,7 +22,12 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
         require_once '../classes/Classe.php';
         $classe = new Classe();
-        $deleteGroupe = $classe->deleteGroupe($_GET['pers']);
+        if(stristr($_GET['groupe'], 'TP')) {
+            $deleteGroupe = $classe->deleteGroupeTP($_GET['pers']);
+        } else {
+            $deleteGroupe = $classe->deleteGroupe($_GET['pers']);
+        }
+
 
     } else if($_GET['type'] === 'cours') {
         require_once '../classes/Cours.php';
