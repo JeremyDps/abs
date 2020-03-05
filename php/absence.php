@@ -61,6 +61,10 @@
                 </select>
                 <label for="salle">Salle</label>
                 <input type="text" class="form-control" name="salle" id="salle" placeholder="Entrer la salle dans laquelle vous vous trouvez">
+                <label for="start">Heure de début</label>
+                <input id="start" type="time" required class="form-control" name="start" placeholder="HH:MM">
+                <label for="end">Fin</label>
+                <input id="end" type="time" required class="form-control" name="end" placeholder="HH:MM">
                 <button name="valider_cours" class="btn btn-primary" type="submit">Rechercher</button>
 
         </div>
@@ -73,6 +77,8 @@
         $classee = $_GET['classe'];
         $cours = $_GET['cours'];
         $salle = $_GET['salle'];
+        $start = $_GET['start'];
+        $end = $_GET['end'];
         ?>
     <p>Classe : <strong><?php  echo $classee;  ?></strong>, cours : <strong><?php  echo $cours;  ?></strong>, salle : <strong><?php  echo $salle;  ?></strong></p>
     <table class="table" id="table">
@@ -85,7 +91,7 @@
         </tr>
         </thead>
         <tbody>
-            <form method="post" action="recapAbs.php?classe=<?= $classe?>&cours=<?= $cours ?>&salle=<?= $salle ?>">
+            <form method="post" action="recapAbs.php?classe=<?= $classe?>&cours=<?= $cours ?>&salle=<?= $salle ?>&start=<?= $start ?>&end=<?= $end ?>">
                 <?php foreach ($list_etu as $etudiant): ?>
                     <tr>
                         <th><?= $etudiant['idEtu'] ?></th>

@@ -13,6 +13,7 @@ class Event {
 
     private $idEtu;
 
+
     public function getId(): int {
         return $this->id;
     }
@@ -25,7 +26,7 @@ class Event {
         return $this->name;
     }
 
-    
+
 
     public function getDescription (): string {
         return $this->description ?? '';

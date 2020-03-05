@@ -56,10 +56,12 @@
         $classe = $_POST['classe'];
         $cours = $_POST['cours'];
         $salle = $_POST['salle'];
+        $start = $_POST['start'];
+        $end = $_POST['end'];
 
         $classes->etuByClasse($classe);
 
-        header('Location: ../php/absence.php?classe='.$classe.'&cours='.$cours.'&salle='.$salle);
+        header('Location: ../php/absence.php?classe='.$classe.'&cours='.$cours.'&salle='.$salle.'&start='.$start.'&end='.$end);
     }
 
     if(isset($_POST['create_etu'])) {
