@@ -1,4 +1,9 @@
 <?php
+    include "../classes/DBClass.php";
+
+    $db = new DBClass('gestion_absence');
+
+
     session_start();
     if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
@@ -15,6 +20,9 @@
         }
 
         $list_etudiants_sans_groupe = $etu->etuWithoutGroup();
+
+
+
 ?>
 
 <div class = "container">
@@ -40,7 +48,8 @@
             <th scope="col">Tag</th>
             <th scope="col">Nom</th>
             <th scope="col">Prénom</th>
-            <th scope="col">Nombre d'absences</th>
+            <th scope="col">Absences non justifiées</th>
+            <th scope="col">Absences justifiées</th>
             <th scope="col">Formation</th>
             <th scope="col">Groupe</th>
             <th scope="col">Supprimer</th>
@@ -48,12 +57,12 @@
         </thead>
         <tbody>
         <?php foreach ($list_etudiants as $etudiant): ?>
-
         <tr>
             <th scope="row"><?= $etudiant['idEtu']?></th>
             <td><a href="profile.php?pers=<?= $etudiant['idEtu'] ?>&type=etu"><?= $etudiant['nom'] ?></a></td>
             <td><?= $etudiant['prenom'] ?></td>
-            <td><?= $etudiant['nbr_absence'] ?></td>
+            <td><?= $db->countAbs($etudiant['idEtu']) ?></td>
+            <td><?= $db->countAbsJustifier($etudiant['idEtu']) ?></td>
             <td><?= $etudiant['formation'] ?></td>
             <td><?= $etudiant['groupe'] ?></td>
             <td><a href="delete.php?type=etu&pers=<?= $etudiant['idEtu'] ?>">Supprimer l'étudiant</a> </td>
@@ -71,7 +80,8 @@
                 <th scope="col">Tag</th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
-                <th scope="col">Nombre d'absences</th>
+                <th scope="col">Absences non justifiées</th>
+                <th scope="col">Absences justifiées</th>
                 <th scope="col">Formation</th>
                 <th scope="col">Groupe</th>
                 <th scope="col">Supprimer</th>
@@ -84,7 +94,8 @@
                     <th scope="row"><?= $etudiant['id']?></th>
                     <td><a href="profile.php?pers=<?= $etudiant['id'] ?>&type=etuWithoutGroup"><?= $etudiant['nom'] ?></a></td>
                     <td><?= $etudiant['prenom'] ?></td>
-                    <td><?= $etudiant['nbr_absence'] ?></td>
+                    <td><?= $db->countAbs($etudiant['id']) ?></td>
+                    <td><?= $db->countAbsJustifier($etudiant['id']) ?></td>
                     <td><?= $etudiant['formation'] ?></td>
                     <td><?= $etudiant['groupe'] ?></td>
                     <td><a href="delete.php?type=etu&pers=<?= $etudiant['id'] ?>">Supprimer l'étudiant</a> </td>

@@ -26,17 +26,17 @@
 
     $pdo = get_pdo();
 
-    $testicule = new Event();
+    $abs = new Event();
     $abscence = new Events($pdo);
 
-    $testicule->setName('Absence');
-    $testicule->setStart($start);
-    $testicule->setEnd($end);
-    $testicule->setDescription('Absences non justifier');
+    $abs->setName('Absence');
+    $abs->setStart($start);
+    $abs->setEnd($end);
+    $abs->setDescription('Absence non justifiée');
     foreach ($_POST["tableau"] as $key => $value) {
-        $abscence->create($testicule, $value);
+        $abscence->create($abs, $value);
     }
-    var_dump($tabAbsents);
+        header('Location: absence.php');
 ?>
 
 <?php

@@ -723,4 +723,19 @@ class DBClass
         return $list_etu_sans_groupe;
     }
 
+    public function countAbs($idEtu) {
+        $query = $this->getPDO()->prepare("SELECT COUNT(*) FROM absence WHERE idEtu=$idEtu AND description ='absence non justifiée'");
+        $query->execute();
+        $result = $query->fetch();
+        echo $result['COUNT(*)'];
+    }
+
+    public function countAbsJustifier($idEtu) {
+        $query = $this->getPDO()->prepare("SELECT COUNT(*) FROM absence WHERE idEtu=$idEtu AND description !='absence non justifiée'");
+        $query->execute();
+        $result = $query->fetch();
+        echo $result['COUNT(*)'];
+    }
+
 }
+

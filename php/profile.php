@@ -4,6 +4,8 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     include '../classes/DBClass.php';
     require '../layout/header.php';
 
+    $db = new DBClass('gestion_absence');
+
 
 
     if ($_GET['type'] === 'prof') {
@@ -57,8 +59,8 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     <ul>
         <li><?= $coordonnees['formation'] ?></li>
-        <li>Absences non justifiés : <?= $coordonnees['nbr_absence'] ?></li>
-        <li>Absences justifiés : <?= $coordonnees['absence_justifiee'] ?></li>
+        <li>Absences non justifiés : <?= $db->countAbs($_GET['pers'])?></li>
+        <li>Absences justifiés : <?= $db->countAbsJustifier($_GET['pers']) ?></li>
         <li>Badges n°<?= $coordonnees['badge']?></li>
     </ul>
 
