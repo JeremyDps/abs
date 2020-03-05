@@ -64,6 +64,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     <a href="modifier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Modifier</a>
 
+    <a href="calendrier.php?pers=<?= $_GET['pers'] ?>&type=<?= $_GET['type'] ?>" class="btn btn-primary">Détail absences</a>
     <?php  } else if($_GET['type'] === 'prof') {
 
     ?>
