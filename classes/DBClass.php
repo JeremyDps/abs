@@ -254,7 +254,9 @@ class DBClass
         $list_group = array();
         $i = 0;
 
-        if($req = $this->getPDO()->prepare("select groupe.nom from groupe inner join classe on classe.idClasse = groupe.classe_id where classe.nom = ? order by groupe.nom asc")) {
+        if($req = $this->getPDO()->prepare("select groupe.nom from groupe 
+                                                     inner join classe on classe.idClasse = groupe.classe_id 
+                                                     where classe.nom = ? order by groupe.nom asc")) {
             $req->execute(array($classe));
             while($donnees = $req->fetch()) {
                 $list_group[$i] = array(
@@ -262,7 +264,20 @@ class DBClass
                 );
                 $i++;
             }
+
+            $req2 = $this->getPDO()->prepare("select groupe_tp.nom from groupe_tp
+                                                     inner join groupe on groupe.idGroupe = groupe_tp.classe_td_id 
+                                                     inner join classe on classe.idClasse = groupe.classe_id 
+                                                     where classe.nom = ? order by groupe.nom asc");
+            $req2->execute(array($classe));
+            while($donnees = $req2->fetch()) {
+                $list_group[$i] = array(
+                    'groupe' => $donnees['nom']
+                );
+                $i++;
+            }
             $req->closeCursor();
+            $req2->closeCursor();
             return $list_group;
         } else {
             $req->closeCursor();
@@ -714,7 +729,7 @@ class DBClass
         $data = $nomClasse->fetch();
 
         $update = $this->getPDO()->prepare("update etudiant
-                                                      set classe_id = :idClasse, formation = :formation
+                                                      set classe_id = :idClasse, formation = :formation, groupe_id = 0, groupe_tp_id = 0
                                                       where idEtu = :idEtu");
         $update->execute(array(
             'idClasse' => $idClasse,
@@ -729,8 +744,10 @@ class DBClass
 
 
 
-        $query = $this->getPDO()->query("SELECT idEtu, prenom, nom, formation, nbr_absence FROM `etudiant` 
-                                                  WHERE groupe_id < 1 or groupe_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp)");
+        $query = $this->getPDO()->query("SELECT etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence,
+                                                  groupe_tp.nom as tp FROM `etudiant`
+                                                  inner join groupe_tp on groupe_tp.idGroupeTP = etudiant.groupe_tp_id
+                                                  WHERE etudiant.groupe_id < 1 or etudiant.groupe_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp)");
 
         $query->execute();
 
@@ -741,13 +758,60 @@ class DBClass
                 'prenom' => $datas['prenom'],
                 'formation' => $datas['formation'],
                 'nbr_absence' => $datas['nbr_absence'],
-                'groupe' => 'Aucun groupe'
+                'groupe' => 'Aucun groupe',
+                'groupe_tp' => $datas['tp']
+
+            );
+
+            $i++;
+        }
+
+        $query2 = $this->getPDO()->query("SELECT etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence,
+                                                  groupe.nom as tp FROM `etudiant`
+                                                  inner join groupe on groupe.idGroupe = etudiant.groupe_id
+                                                  WHERE etudiant.groupe_tp_id < 1 or etudiant.groupe_tp_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp)");
+
+        $query2->execute();
+
+        while($datas = $query2->fetch()) {
+            $list_etu_sans_groupe[$i] = array(
+                'id' => $datas['idEtu'],
+                'nom' => $datas['nom'],
+                'prenom' => $datas['prenom'],
+                'formation' => $datas['formation'],
+                'nbr_absence' => $datas['nbr_absence'],
+                'groupe' => $datas['tp'],
+                'groupe_tp' => 'Aucun groupe'
+
+            );
+
+            $i++;
+        }
+
+        $query3 = $this->getPDO()->prepare("SELECT etudiant.idEtu, etudiant.prenom, etudiant.nom, etudiant.formation, etudiant.nbr_absence FROM `etudiant` 
+                                                     WHERE (etudiant.groupe_tp_id < 1 or etudiant.groupe_tp_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp)) 
+                                                     and (etudiant.groupe_id < 1 or etudiant.groupe_id > (select COUNT(*) from groupe) + (select count(*) from groupe_tp))");
+
+        $query3->execute();
+
+        while($datas = $query3->fetch()) {
+            $list_etu_sans_groupe[$i] = array(
+                'id' => $datas['idEtu'],
+                'nom' => $datas['nom'],
+                'prenom' => $datas['prenom'],
+                'formation' => $datas['formation'],
+                'nbr_absence' => $datas['nbr_absence'],
+                'groupe' => 'Aucun groupe',
+                'groupe_tp' => 'Aucun groupe'
+
             );
 
             $i++;
         }
 
         $query->closeCursor();
+        $query2->closeCursor();
+        $query3->closeCursor();
         return $list_etu_sans_groupe;
     }
 
@@ -924,22 +988,25 @@ class DBClass
             $i++;
         }
 
-        $tp = $this->getPDO()->prepare("select groupe_tp.idGroupeTP, groupe_tp.nom from groupe_tp 
+        if(!stristr($classe, 'LP')) {
+            $tp = $this->getPDO()->prepare("select groupe_tp.idGroupeTP, groupe_tp.nom from groupe_tp 
                                                  inner join groupe on groupe.idGroupe = groupe_tp.classe_td_id
                                                  inner join classe on classe.idClasse = groupe.classe_id
                                                  where classe.nom = :nom");
-        $tp->execute(array('nom' => $classe));
+            $tp->execute(array('nom' => $classe));
 
-        while($datas_tp = $tp->fetch()) {
-            $list_groupes[$i] = array(
-                'id' => $datas_tp['idGroupeTP'],
-                'nom' => $datas_tp['nom']
-            );
-            $i++;
+            while($datas_tp = $tp->fetch()) {
+                $list_groupes[$i] = array(
+                    'id' => $datas_tp['idGroupeTP'],
+                    'nom' => $datas_tp['nom']
+                );
+                $i++;
+            }
+            $tp->closeCursor();
         }
 
         $td->closeCursor();
-        $tp->closeCursor();
+
 
         return $list_groupes;
 

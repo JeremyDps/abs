@@ -23,7 +23,6 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     <?php if(isset($_GET['classe'])) {
         $list_groupe = $classe->selectGroupeByClasse($_GET['classe']);
-        var_dump($list_groupe);
     ?>
 
 <a href="ajouter.php?type=group" class="btn btn-primary">Ajouter un groupe</a>

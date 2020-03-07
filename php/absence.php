@@ -9,8 +9,6 @@
 
         echo $_SESSION['username'];
         $list_classe = $classe->classeByProf($_SESSION['username']);
-        var_dump($list_classe);
-
 
         if (isset($_GET['classe'])) {
             $list_etu = $classe->etuByClasse($_GET['classe']);
