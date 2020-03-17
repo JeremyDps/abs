@@ -21,15 +21,11 @@
 
     //verification modification etudiant
     if(isset($_POST['modifier_etu'])) {
-        $absence = $_POST['absence'];
-        $absenceNonJustifiee = $_POST['absenceNonJustifiee'];
         $badge = $_POST['badge'];
         $groupe = $_POST['groupe'];
         $groupe_tp = $_POST['groupe_tp'];
 
-        echo $groupe;
-
-        $etu->updateEtudiant($absence, $absenceNonJustifiee, $badge, $groupe, $groupe_tp);
+        $etu->updateEtudiant($badge, $groupe, $groupe_tp);
     }
 
     if(isset($_POST['modifier_prof'])) {
@@ -57,10 +53,16 @@
         $classe = $_POST['classe'];
         $cours = $_POST['cours'];
         $salle = $_POST['salle'];
+        $start = $_POST['start'];
+        $end = $_POST['end'];
+
+        if(stristr($classe, 'TP')) {
+            $classes->etuByClasseTP($classe);
+        }
 
         $classes->etuByClasse($classe);
 
-        header('Location: ../php/absence.php?classe='.$classe.'&cours='.$cours.'&salle='.$salle);
+        header('Location: ../php/absence.php?classe='.$classe.'&cours='.$cours.'&salle='.$salle.'&start='.$start.'&end='.$end);
     }
 
     if(isset($_POST['create_etu'])) {

@@ -4,6 +4,8 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     include '../classes/DBClass.php';
     require '../layout/header.php';
 
+    $db = new DBClass('gestion_absence');
+
 
 
     if ($_GET['type'] === 'prof') {
@@ -42,7 +44,18 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     }
 
 ?>
-
+<div>
+    <nav class="navbar navbar-expand ">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
+                <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+            </li>
+            <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
+            <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
+            <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="passage.php">Passer les étudiants à l'année suivante</a></li>
+        </ul>
+    </nav>
+</div><br>
 <?php
 
     if($_GET['type'] === 'etu') {
@@ -54,8 +67,8 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     <ul>
         <li><?= $coordonnees['formation'] ?></li>
-        <li>Absences non justifiés : <?= $coordonnees['nbr_absence'] ?></li>
-        <li>Absences justifiés : <?= $coordonnees['absence_justifiee'] ?></li>
+        <li>Absences non justifiés : <?= $db->countAbs($_GET['pers'])?></li>
+        <li>Absences justifiés : <?= $db->countAbsJustifier($_GET['pers']) ?></li>
         <li>Badges n°<?= $coordonnees['badge']?></li>
     </ul>
 

@@ -117,4 +117,16 @@ class Classe{
 
         header('Location: ../php/admin.php');
     }
+
+    function etuByClasseTP($classe) {
+        $db = new DBClass("gestion_absence");
+
+        return $db->selectEtuByClasseTP($classe);
+    }
+
+    function etuByFormation($classe) {
+        $db = new DBClass("gestion_absence");
+
+        return $db->selectEtuByFormation($classe);
+    }
 }

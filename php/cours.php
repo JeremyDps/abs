@@ -8,7 +8,18 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     $cours = new Cours();
     $list_cours = $cours->allCours();
 ?>
-
+    <div>
+        <nav class="navbar navbar-expand ">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
+                    <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+                </li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="passage.php">Passer les étudiants à l'année suivante</a></li>
+            </ul>
+        </nav>
+    </div><br>
     <a href="ajouter.php?type=cours" class="btn btn-primary">Ajouter un cours</a>
     <table class="table" id="table">
         <thead class="thead-dark">

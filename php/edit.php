@@ -19,7 +19,8 @@ $data = [
     'date'        => $event->getStart()->format('Y-m-d'),
     'start'       => $event->getStart()->format('H:i'),
     'end'         => $event->getEnd()->format('H:i'),
-    'description' => $event->getDescription()
+    'description' => $event->getDescription(),
+    'idEtu'       => $event->getIdEtu()
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

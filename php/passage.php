@@ -22,6 +22,18 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         echo "Aucune case n'a été cochée.<br />";
     }*/
 ?>
+    <div>
+        <nav class="navbar navbar-expand ">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
+                    <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+                </li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="passage.php">Passer les étudiants à l'année suivante</a></li>
+            </ul>
+        </nav>
+    </div><br>
 
     <form method="post" action="../classes/traitement.php">
         <label name="classe">Choississez la classe : </label>

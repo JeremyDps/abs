@@ -35,12 +35,12 @@ class Etudiant {
         return $db->selectAllEtu();
     }
 
-    function updateEtudiant($abs, $absNonJustifiee, $badge, $groupe, $groupe_tp) {
+    function updateEtudiant($badge, $groupe, $groupe_tp) {
         $db = new DBClass('gestion_absence');
 
-        $db->updateEtudiantByUser($abs, $absNonJustifiee, $badge, $groupe, $groupe_tp);
+        $db->updateEtudiantByUser($badge, $groupe, $groupe_tp);
 
-        //header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
+        header("Location: ../php/profile.php?pers=".$_SESSION['idEtu']."&type=etu");
     }
 
     function search($recherche) {
@@ -123,5 +123,11 @@ class Etudiant {
         $db = new DBClass('gestion_absence');
 
         return $db->selectEtuByGroupTP($id);
+    }
+
+    function selectEtuDifferent($classe) {
+        $db = new DBClass('gestion_absence');
+
+        return $db->selectEtuDifferent($classe);
     }
 }

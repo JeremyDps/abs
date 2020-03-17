@@ -1,4 +1,7 @@
 <?php
+    require 'bootstrap.php';
+    require '../classes/Event.php';
+    require '../classes/Events.php';
 
     session_start();
     if ($_SESSION['connecte'] == true) {
@@ -13,21 +16,28 @@
     $classe = $_GET['classe'];
     $cours = $_GET['cours'];
     $salle = $_GET['salle'];
+    $start = $_GET['start'];
+    $end = $_GET['end'];
+
 
     $tabAbsents['classe'] = $classe;
     $tabAbsents['cours'] = $cours;
     $tabAbsents['salle'] = $salle;
 
+    $pdo = get_pdo();
+
+    $abs = new Event();
+    $abscence = new Events($pdo);
+
+    $abs->setName('Absence');
+    $abs->setStart($start);
+    $abs->setEnd($end);
+    $abs->setDescription('Absence non justifiée');
     foreach ($_POST["tableau"] as $key => $value) {
-        $etuById = $etu->etuById($value);
-        $tabAbsents[$i] = array(
-            'id' => $value,
-            'nom' => $etuById['nom'],
-            'prenom' => $etuById['prenom']
-        );
-        $i++;
+        $abscence->create($abs, $value);
     }
 
+        header('Location: absence.php');
 ?>
 
 <?php

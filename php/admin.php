@@ -1,4 +1,9 @@
 <?php
+    include "../classes/DBClass.php";
+
+    $db = new DBClass('gestion_absence');
+
+
     session_start();
     if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
@@ -15,32 +20,39 @@
         }
 
         $list_etudiants_sans_groupe = $etu->etuWithoutGroup();
+
+
+
 ?>
 
 <div class = "container">
-    <div class="right">
+    <div>
         <form method="post" action="../classes/traitement.php">
-            <label name="recherche">Rechercher (nom, prénom, id ou formation)</label>
-            <input type="text" name="recherche">
-            <input type="submit" name="rechercher">
-        </form>
-
-        <a href="professeurs.php">Liste des professeurs</a>  <br>
-        <a href="groupes.php">Liste des Groupes</a>  <br>
-        <a href="cours.php">Liste des Cours</a> <br>
-        <a href="passage.php">Passer les étudiants à l'année suivante</a>
-
-    </div>
+            <input class="form-control mr-sm-2" type="text" name="recherche" placeholder="Rechercher (nom, prénom, id ou formation)">
+            <input class="btn btn-primary" type="submit" name="rechercher">
+        </form><br>
+        <nav class="navbar navbar-expand ">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
+                    <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+                </li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="passage.php">Passer les étudiants à l'année suivante</a></li>
+            </ul>
+        </nav>
+    </div><br>
 
     <?php  if(!isset($_GET['param'])) {  ?>
-    <a href="ajouter.php?type=etu" class="btn btn-primary">Ajouter un étudiant</a>
+    <a href="ajouter.php?type=etu" class="btn btn-primary">Ajouter un étudiant</a><br>
     <table class="table" id="table">
         <thead class="thead-dark">
         <tr>
             <th scope="col">Tag</th>
             <th scope="col">Nom</th>
             <th scope="col">Prénom</th>
-            <th scope="col">Nombre d'absences</th>
+            <th scope="col">Absences non justifiées</th>
+            <th scope="col">Absences justifiées</th>
             <th scope="col">Formation</th>
             <th scope="col">Groupe</th>
             <th scope="col">TP</th>
@@ -49,12 +61,12 @@
         </thead>
         <tbody>
         <?php foreach ($list_etudiants as $etudiant): ?>
-
         <tr>
             <th scope="row"><?= $etudiant['idEtu']?></th>
             <td><a href="profile.php?pers=<?= $etudiant['idEtu'] ?>&type=etu"><?= $etudiant['nom'] ?></a></td>
             <td><?= $etudiant['prenom'] ?></td>
-            <td><?= $etudiant['nbr_absence'] ?></td>
+            <td><?= $db->countAbs($etudiant['idEtu']) ?></td>
+            <td><?= $db->countAbsJustifier($etudiant['idEtu']) ?></td>
             <td><?= $etudiant['formation'] ?></td>
             <td><?= $etudiant['groupe'] ?></td>
             <td><?= $etudiant['tp'] ?></td>
@@ -73,7 +85,8 @@
                 <th scope="col">Tag</th>
                 <th scope="col">Nom</th>
                 <th scope="col">Prénom</th>
-                <th scope="col">Nombre d'absences</th>
+                <th scope="col">Absences non justifiées</th>
+                <th scope="col">Absences justifiées</th>
                 <th scope="col">Formation</th>
                 <th scope="col">Groupe</th>
                 <th scope="col">Groupe TP</th>
@@ -87,7 +100,8 @@
                     <th scope="row"><?= $etudiant['id']?></th>
                     <td><a href="profile.php?pers=<?= $etudiant['id'] ?>&type=etuWithoutGroup"><?= $etudiant['nom'] ?></a></td>
                     <td><?= $etudiant['prenom'] ?></td>
-                    <td><?= $etudiant['nbr_absence'] ?></td>
+                    <td><?= $db->countAbs($etudiant['id']) ?></td>
+                    <td><?= $db->countAbsJustifier($etudiant['id']) ?></td>
                     <td><?= $etudiant['formation'] ?></td>
                     <td><?= $etudiant['groupe'] ?></td>
                     <td><?= $etudiant['groupe_tp'] ?></td>

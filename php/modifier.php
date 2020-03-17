@@ -1,6 +1,9 @@
 <?php
 session_start();
 require '../layout/header.php';
+include '../classes/DBClass.php';
+
+$db = new DBClass('gestion_absence');
 
 
 if ($_GET['type'] === 'prof') {
@@ -49,7 +52,18 @@ if ($_GET['type'] === 'prof') {
     echo 'type inconnu';
 }
 ?>
-
+    <div>
+        <nav class="navbar navbar-expand ">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
+                    <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+                </li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
+                <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="passage.php">Passer les étudiants à l'année suivante</a></li>
+            </ul>
+        </nav>
+    </div><br>
 <?php
 
 if($_GET['type'] === 'etu') {
@@ -57,8 +71,8 @@ if($_GET['type'] === 'etu') {
     ?>
     <form method="post" action="../classes/traitement.php">
         <ul>
-            <li>Absences: <input name="absence" type="number" value="<?= $coordonnees['nbr_absence'] ?>" required></li>
-            <li>Absences non justifiées: <input name="absenceNonJustifiee" type="number" value="<?= $coordonnees['absence_justifiee'] ?>" required></li>
+            <li>Absences justifiée : <?= $db->countAbsJustifier($_GET['pers'])?> </li>
+            <li>Absences non justifiées: <?= $db->countAbs($_GET['pers'])?> </li>
             <li>Badges n° <input name="badge" type="number" value="<?= $coordonnees['badge'] ?>" required></li>
             <li>Changer le groupe TD (<strong><?= $coordonnees['tp'] ?></strong> -- <strong><?= $coordonnees['groupe'] ?></strong> -- <strong><?= $coordonnees['classe'] ?></strong>)
                 <select id="groupe" name="groupe">

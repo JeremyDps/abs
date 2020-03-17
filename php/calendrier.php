@@ -34,8 +34,8 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         <?php endif; ?>
 
         <div>
-            <a href="calendrier.php?month=<?= $month->previousMonth()->month; ?>&year=<?= $month->previousMonth()->year; ?>" class="btn btn-primary">&lt;</a>
-            <a href="calendrier.php?month=<?= $month->nextMonth()->month; ?>&year=<?= $month->nextMonth()->year; ?>" class="btn btn-primary">&gt;</a>
+            <a href="calendrier.php?month=<?= $month->previousMonth()->month; ?>&year=<?= $month->previousMonth()->year; ?>&pers=<?= $_GET['pers'] ?>" class="btn btn-primary">&lt;</a>
+            <a href="calendrier.php?month=<?= $month->nextMonth()->month; ?>&year=<?= $month->nextMonth()->year; ?>&pers=<?= $_GET['pers'] ?>"class="btn btn-primary">&gt;</a>
         </div>
     </div>
 
