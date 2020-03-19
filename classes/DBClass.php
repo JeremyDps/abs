@@ -60,6 +60,12 @@ class DBClass
                 return 2;
             }
 
+            if($isConnecte['role'] == "secretariat") {
+                $_SESSION['role'] = "secretariat";
+                $req->closeCursor();
+                return 2;
+            }
+
         }else{
             $req->closeCursor();
             $_SESSION['connecte'] = false;
@@ -286,6 +292,22 @@ class DBClass
             }
 
             $req->closeCursor();
+
+            if(!stristr($classe, 'LP')) {
+                $tp = $this->getPDO()->prepare("select groupe_tp.nom from groupe_tp 
+                                                 inner join groupe on groupe.idGroupe = groupe_tp.classe_td_id
+                                                 inner join classe on classe.idClasse = groupe.classe_id
+                                                 where classe.nom = :nom");
+                $tp->execute(array('nom' => $classe));
+
+                while($datas_tp = $tp->fetch()) {
+                    $list_group[$i] = array(
+                        'groupe' => $datas_tp['nom']
+                    );
+                    $i++;
+                }
+                $tp->closeCursor();
+            }
             return $list_group;
         } else {
             $req->closeCursor();
@@ -297,7 +319,7 @@ class DBClass
         $list_prof = array();
         $i = 0;
 
-        if($req = $this->getPDO()->query('select * from user where role = "admin" or role = "prof" order by nomUser')) {
+        if($req = $this->getPDO()->query('select * from user where role = "admin" or role = "prof" or role = "secretariat" order by nomUser')) {
             while($datas = $req->fetch()) {
                 $list_prof[$i] = array(
                     'id' => $datas['id'],
@@ -373,7 +395,7 @@ class DBClass
     public function selectDetailsProfesseur($id) {
         $list_details = array();
 
-        $query = $this->getPDO()->prepare('SELECT * FROM user where id = ? and (role = "admin" or role = "prof")');
+        $query = $this->getPDO()->prepare('SELECT * FROM user where id = ? and (role = "admin" or role = "prof" or role = "secretariat")');
         $query->execute(array($id));
 
         $datas = $query->fetch();
@@ -631,7 +653,7 @@ class DBClass
         $i = 0;
 
         $query = $this->getPDO()->query("select cours.idCours, cours.matricule, cours.nom, classe.nom as nomClasse from cours
-                                                    inner join classe on classe.idClasse = cours.classe_id order by classe.nom");
+                                                    inner join classe on classe.idClasse = cours.classe_id order by classe.nom, cours.nom");
 
         while($datas = $query->fetch()) {
             $list_cours[$i] = array(

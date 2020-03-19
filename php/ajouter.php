@@ -1,6 +1,6 @@
 <?php
 session_start();
-if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
+if ($_SESSION['connecte'] == true && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == "secretariat")) {
 
     require '../layout/header.php';
     require_once '../classes/Classe.php';
@@ -65,6 +65,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
      <select id="role" name="role">
          <option name="role">Admin</option>
          <option name="role">Prof</option>
+         <option name="role">Secretariat</option>
      </select>  <br>
      <input type="submit" name="create_prof" value="Créer le professeur">
  </form>

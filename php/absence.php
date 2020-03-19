@@ -9,17 +9,16 @@
 
         $list_classe = $classe->classeByProf($_SESSION['username']);
 
+
         if (isset($_GET['classe'])) {
             if(stristr($_GET['classe'], 'TP')) {
                 $list_etu = $classe->etuByClasseTP($_GET['classe']);
-                echo $_GET['classe'] . ' ' . 'TP';
             } else if($_GET['classe'] === 'DUT INFO 1' || $_GET['classe'] === 'DUT INFO 2'){
                 $list_etu = $classe->etuByFormation($_GET['classe']);
             } else {
                 $list_etu = $classe->etuByClasse($_GET['classe']);
             }
 
-            var_dump($list_etu);
         }
 
 

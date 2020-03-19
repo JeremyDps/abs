@@ -1,6 +1,6 @@
 <?php
     session_start();
-if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
+if ($_SESSION['connecte'] == true && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == "secretariat")) {
     include '../classes/DBClass.php';
     require '../layout/header.php';
 
@@ -48,7 +48,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
     <nav class="navbar navbar-expand ">
         <ul class="navbar-nav">
             <li class="nav-item dropdown" style="margin-right: 50px; padding-left: 60px;">
-                <a class="btn btn-primary" href="professeurs.php">Liste des professeurs</a>
+                <a class="btn btn-primary" href="professeurs.php">Liste des utilisateurs</a>
             </li>
             <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="groupes.php">Liste des Groupes</a></li>
             <li class="nav-item" style="margin-right: 50px;"><a class="btn btn-primary" href="cours.php">Liste des Cours</a></li>
@@ -79,7 +79,7 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
 
     ?>
 
-    <h1> Profil Professeur de <?= $coordonnees['nom'] ?> <?= $coordonnees['prenom'] ?></h1>
+    <h1> Profil utilisateurs de <?= $coordonnees['nom'] ?> <?= $coordonnees['prenom'] ?></h1>
 
     <div class="container">
 

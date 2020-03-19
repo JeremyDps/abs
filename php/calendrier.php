@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
+if ($_SESSION['connecte'] == true && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == "secretariat")) {
     require '../layout/header.php';
     require 'bootstrap.php';
     require '../classes/Events.php';

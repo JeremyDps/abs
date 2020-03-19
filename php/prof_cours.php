@@ -1,7 +1,7 @@
 <?php
 
 session_start();
-if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
+if ($_SESSION['connecte'] == true && ($_SESSION['role'] == 'admin' || $_SESSION['role'] == "secretariat")) {
 
     require '../layout/header.php';
 
@@ -15,7 +15,6 @@ if ($_SESSION['connecte'] == true && $_SESSION['role'] == 'admin') {
         $prof = new Prof();
 
         $_SESSION['prof_id'] = $_GET['pers'];
-        echo $_SESSION['prof_id'];
 
         $classe_by_prof = $classe->classeByIdProf($_GET['pers']);
         $allClasse = $classe->allClasses();

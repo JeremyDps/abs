@@ -29,7 +29,6 @@
 
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
-            <li class="nav-item"><a href="index.php" class="nav-link">Accueil</a></li>
             <?php if($_SESSION['role'] == 'admin') {  ?>
                 <li class="nav-item"><a href="../php/admin.php" class="nav-link">Page admin</a></li>
                 <li class="nav-item"><a href="../php/absence.php" class="nav-link">Page Professeurs</a></li>
